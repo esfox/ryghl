@@ -1,7 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
 import { createSession } from '@/data/sessions';
+
 import { Methods, ResponseCodes } from 'http-constants-ts';
+import jwt from 'jsonwebtoken';
+
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 const password = process.env.RYGHLTMFFKDLEM_PASSWORD;
 const jwtSecret = process.env.JWT_SECRET;
@@ -21,7 +23,7 @@ export default function handler(request: NextApiRequest, response: NextApiRespon
   }
 
   const passwordInput = request.body.password;
-  if (passwordInput != password) {
+  if (passwordInput !== password) {
     return response.status(ResponseCodes.UNAUTHORIZED).send('Unauthorized');
   }
 

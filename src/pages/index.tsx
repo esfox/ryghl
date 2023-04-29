@@ -1,4 +1,5 @@
 import { useNotion } from '@/hooks/useNotion';
+
 import { useEffectOnce } from 'react-use';
 
 export default function Home() {

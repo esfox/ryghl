@@ -10,6 +10,7 @@ export function useNotion() {
     queryKey: ['pages'],
     queryFn: async () => {
       const { results } = await fetch('/api/pages').then((response) => response.json());
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return results;
     },
     enabled: false,

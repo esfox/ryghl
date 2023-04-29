@@ -1,10 +1,12 @@
 import { useAuth } from '@/hooks/useAuth';
+
 import '@/styles/globals.css';
-import type { AppProps } from 'next/app';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+import type { AppProps } from 'next/app';
 
 const loginRoute = '/login';
 const queryClient = new QueryClient();
@@ -20,8 +22,9 @@ export default function App({ Component, pageProps }: AppProps) {
         const loggedIn = await checkLoggedIn();
         setIsLoggedIn(loggedIn);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(error);
-        replace(loginRoute);
+        await replace(loginRoute);
       }
     };
 

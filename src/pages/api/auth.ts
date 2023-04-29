@@ -1,7 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
-import { Methods, ResponseCodes } from 'http-constants-ts';
 import { checkSession } from '@/data/sessions';
+
+import { Methods, ResponseCodes } from 'http-constants-ts';
+import jwt from 'jsonwebtoken';
+
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 const jwtSecret = process.env.JWT_SECRET;
 

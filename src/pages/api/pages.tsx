@@ -1,6 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { notion } from '@/utils/notion.utils';
+
 import { ResponseCodes } from 'http-constants-ts';
+
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 const defaults = {
   page: 1,
@@ -12,7 +14,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
 
   // TODO: Add page
 
-  let countPerPage = defaults.countPerPage;
+  let { countPerPage } = defaults;
   const queryCountPerPage = query.countPerPage;
   if (queryCountPerPage) {
     if (typeof queryCountPerPage !== 'number') {

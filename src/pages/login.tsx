@@ -1,7 +1,12 @@
 import { useAuth } from '@/hooks/useAuth';
+
 import { useRouter } from 'next/router';
 import { FormEvent } from 'react';
 import { toast } from 'react-hot-toast';
+
+interface LoginForm extends HTMLFormElement {
+  password: HTMLInputElement;
+}
 
 export default function Login() {
   const { login } = useAuth();
@@ -9,14 +14,16 @@ export default function Login() {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = event.target as HTMLFormElement;
+    const form = event.target as LoginForm;
     const password = form.password.value;
     try {
       await login(password);
-      replace('/');
+      await replace('/');
     } catch (error) {
-      toast.error('Invalid password');
+      // eslint-disable-next-line no-console
       console.error(error);
+
+      toast.error('Invalid password');
     }
   };
 
