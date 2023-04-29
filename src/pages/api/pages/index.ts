@@ -23,13 +23,19 @@ export default async function handler(request: NextApiRequest, response: NextApi
     countPerPage = Number(queryCountPerPage);
   }
 
-  const notionResponse = await notion.client.search({
-    filter: {
-      value: 'page',
-      property: 'object',
-    },
-    page_size: countPerPage,
-  });
+  try {
+    const notionResponse = await notion.client.search({
+      filter: {
+        value: 'page',
+        property: 'object',
+      },
+      page_size: countPerPage,
+    });
 
-  response.send(notionResponse);
+    response.send(notionResponse);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    response.status(ResponseCodes.INTERNAL_SERVER_ERROR).send('Internal Server Error');
+  }
 }

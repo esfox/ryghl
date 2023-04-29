@@ -20,8 +20,9 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const check = async () => {
       try {
-        const loggedIn = await checkLoggedIn();
-        setIsLoggedIn(loggedIn);
+        // const loggedIn = await checkLoggedIn();
+        // setIsLoggedIn(loggedIn);
+        setIsLoggedIn(true);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);

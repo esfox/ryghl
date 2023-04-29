@@ -1,6 +1,6 @@
 {
   "version": "0.2",
   "language": "en",
-  "words": ["tanstack", "ryghltmffkdlem", "RYGHLTMFFKDLEM"],
+  "words": ["tanstack", "ryghltmffkdlem", "RYGHLTMFFKDLEM", "notionhq", "mdimg"],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }
