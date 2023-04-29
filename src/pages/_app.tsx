@@ -1,6 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 
 import '@/styles/globals.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';

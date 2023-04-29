@@ -10,8 +10,17 @@ export function useNotion() {
     queryKey: ['pages'],
     queryFn: async () => {
       const { results } = await fetch('/api/pages').then((response) => response.json());
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return results;
+
+      /* Map the notion pages to an instance of `PageType` */
+      const pagesResult = [];
+      for (const result of results) {
+        const title = result.properties?.title?.title[0]?.text?.content ?? 'Untitled';
+        pagesResult.push({
+          title,
+        });
+      }
+
+      return pagesResult;
     },
     enabled: false,
   });

@@ -15,6 +15,7 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
+    "no-restricted-syntax": "off",
     "consistent-return": "off",
     "class-methods-use-this": "off",
     "linebreak-style": "off",

@@ -1,3 +1,4 @@
+import { PageGridItem } from '@/components/PageGridItem';
 import { useNotion } from '@/hooks/useNotion';
 
 import { useEffectOnce } from 'react-use';
@@ -17,8 +18,9 @@ export default function Home() {
       {isLoadingPages ? (
         <div className="h-full w-full grid place-items-center">Loading...</div>
       ) : (
-        <div className="grid grid-cols-3 gap-4">
-          <pre>{JSON.stringify(pages, null, 2)}</pre>
+        <div className="grid grid-cols-4 gap-x-4 gap-y-12 p-4">
+          {pages &&
+            pages.map((page, index) => <PageGridItem key={`${index}_${Date.now()}`} page={page} />)}
         </div>
       )}
     </>
