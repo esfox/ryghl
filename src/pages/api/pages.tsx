@@ -1,0 +1,33 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { notion } from '@/utils/notion.utils';
+import { ResponseCodes } from 'http-constants-ts';
+
+const defaults = {
+  page: 1,
+  countPerPage: 10,
+};
+
+export default async function handler(request: NextApiRequest, response: NextApiResponse) {
+  const query = request.query ?? {};
+
+  // TODO: Add page
+
+  let countPerPage = defaults.countPerPage;
+  const queryCountPerPage = query.countPerPage;
+  if (queryCountPerPage) {
+    if (typeof queryCountPerPage !== 'number') {
+      return response.status(ResponseCodes.BAD_REQUEST).send('Bad Request');
+    }
+    countPerPage = Number(queryCountPerPage);
+  }
+
+  const notionResponse = await notion.client.search({
+    filter: {
+      value: 'page',
+      property: 'object',
+    },
+    page_size: countPerPage,
+  });
+
+  response.send(notionResponse);
+}

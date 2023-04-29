@@ -9,17 +9,30 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@notionhq/client": "^2.2.4",
+    "@tanstack/react-query": "^4.29.5",
     "@types/node": "18.16.1",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.1",
     "autoprefixer": "10.4.14",
+    "daisyui": "^2.51.6",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",
+    "http-constants-ts": "^1.0.7",
+    "jsonwebtoken": "^9.0.0",
+    "ky": "^0.33.3",
     "next": "13.3.1",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.4.0",
+    "react-use": "^17.4.0",
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.2",
+    "eslint-config-prettier": "^8.8.0",
+    "prettier": "^2.8.8"
   }
 }
