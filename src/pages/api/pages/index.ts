@@ -12,8 +12,6 @@ const defaults = {
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
   const query = request.query ?? {};
 
-  // TODO: Add page
-
   let { countPerPage } = defaults;
   const queryCountPerPage = query.countPerPage;
   if (queryCountPerPage) {

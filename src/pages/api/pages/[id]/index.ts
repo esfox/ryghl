@@ -37,7 +37,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
     content,
   };
 
-  if (withPreview !== undefined) {
+  if (withPreview !== undefined && withPreview !== 'false') {
     const { data } = await convert2img({
       mdText: content || '‍',
       width: 300,

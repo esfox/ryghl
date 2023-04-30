@@ -1,6 +1,14 @@
 {
   "version": "0.2",
   "language": "en",
-  "words": ["tanstack", "ryghltmffkdlem", "RYGHLTMFFKDLEM", "notionhq", "mdimg"],
+  "words": [
+    "tanstack",
+    "ryghltmffkdlem",
+    "RYGHLTMFFKDLEM",
+    "notionhq",
+    "mdimg",
+    "tailwindcss",
+    "daisyui"
+  ],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }

@@ -2,9 +2,8 @@ import { PageContentDataType, PageType } from '@/types';
 
 import ky from 'ky';
 
-const api = ky.create({
-  prefixUrl: '/api',
-});
+const apiBaseUrl = process.env.API_URL || '';
+const api = ky.create({ prefixUrl: `${apiBaseUrl}/api` });
 
 export const apiService = {
   // TODO: Implement pagination
@@ -26,10 +25,10 @@ export const apiService = {
     return pagesResult;
   },
 
-  async getPageContent(pageId: string) {
+  async getPageContent(pageId: string, withPreview = false) {
     const data: PageContentDataType = await api
-      .get(`pages/${pageId}/content`, {
-        searchParams: new URLSearchParams({ withPreview: 'true' }),
+      .get(`pages/${pageId}`, {
+        searchParams: new URLSearchParams({ withPreview: withPreview.toString() }),
       })
       .json();
     return data;
