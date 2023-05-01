@@ -33,4 +33,9 @@ export const apiService = {
       .json();
     return data;
   },
+
+  async getRealtimeApiKey() {
+    // TODO: Include session token in headers
+    return api.post('realtime-api-key').text();
+  },
 };
