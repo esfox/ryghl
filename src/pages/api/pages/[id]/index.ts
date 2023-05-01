@@ -1,5 +1,5 @@
 import { PageContentDataType } from '@/types';
-import { notion } from '@/utils/notion.utils';
+import { notion } from '@/utils/notion.util';
 
 import { APIResponseError } from '@notionhq/client';
 import { ResponseCodes } from 'http-constants-ts';

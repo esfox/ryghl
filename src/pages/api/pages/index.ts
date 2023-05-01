@@ -1,4 +1,4 @@
-import { notion } from '@/utils/notion.utils';
+import { notion } from '@/utils/notion.util';
 
 import { ResponseCodes } from 'http-constants-ts';
 
