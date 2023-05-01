@@ -34,8 +34,8 @@ export const apiService = {
     return data;
   },
 
-  async getRealtimeApiKey() {
+  async getRealtimeConfig() {
     // TODO: Include session token in headers
-    return api.post('realtime-api-key').text();
+    return api.post('realtime-config').json();
   },
 };

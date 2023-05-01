@@ -7,36 +7,34 @@ import { GetServerSidePropsContext } from 'next';
 import { useEffect } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
-import { randomUUID } from 'crypto';
-
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const pageId = context.query.id as string;
-  const pageContentResponse = await apiService.getPageContent(pageId);
 
-  const realtimeApiKey = await apiService.getRealtimeApiKey();
+  const [pageContentResponse, realtimeConfig] = await Promise.all([
+    apiService.getPageContent(pageId),
+    apiService.getRealtimeConfig(),
+  ]);
 
-  /* Generate a unique client ID for this instance, which is used to determine
-    which client is which in handling realtime */
-  const clientId = randomUUID();
   return {
     props: {
       page: pageContentResponse,
-      realtimeApiKey,
-      clientId,
+      realtimeConfig,
     },
   };
 }
 
 export default function PageContent({
   page,
-  realtimeApiKey,
-  clientId,
+  realtimeConfig,
 }: {
   page: PageContentDataType;
-  realtimeApiKey: string;
-  clientId: string;
+  realtimeConfig: {
+    clientId: string;
+    apiKey: string;
+  };
 }) {
-  configureAbly({ key: realtimeApiKey, clientId });
+  const { clientId, apiKey } = realtimeConfig;
+  configureAbly({ key: apiKey, clientId });
 
   const [realtimeChannel] = useChannel('control', 'scroll', (message) => {
     if (message.clientId === clientId) {
@@ -49,10 +47,8 @@ export default function PageContent({
 
   useEffect(() => {
     const handleScroll = debounce(() => {
-      realtimeChannel.publish('scroll', {
-        scrollY: window.scrollY,
-      });
-    });
+      realtimeChannel.publish('scroll', { scrollY: window.scrollY });
+    }, 200);
 
     window.addEventListener('scroll', handleScroll);
 
