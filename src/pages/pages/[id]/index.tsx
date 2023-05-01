@@ -60,5 +60,5 @@ export default function PageContent({
     };
   }, [sendRealtimeMessage]);
 
-  return <ReactMarkdown className="prose mx-auto py-12">{page.content}</ReactMarkdown>;
+  return <ReactMarkdown className="prose mx-auto break-words p-8">{page.content}</ReactMarkdown>;
 }
