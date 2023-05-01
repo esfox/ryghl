@@ -42,6 +42,7 @@
     "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
+    "ably": "^1.2.39",
     "concurrently": "^8.0.1",
     "cspell": "^6.31.1",
     "eslint-config-airbnb-base": "^15.0.0",

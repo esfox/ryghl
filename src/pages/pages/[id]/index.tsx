@@ -1,8 +1,8 @@
+import { useRealtime } from '@/hooks/useRealtime';
 import { apiService } from '@/services/api.service';
 import { PageContentDataType } from '@/types';
 import { debounce } from '@/utils';
 
-import { configureAbly, useChannel } from '@ably-labs/react-hooks';
 import { GetServerSidePropsContext } from 'next';
 import { useEffect } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
@@ -34,20 +34,23 @@ export default function PageContent({
   };
 }) {
   const { clientId, apiKey } = realtimeConfig;
-  configureAbly({ key: apiKey, clientId });
+  const { sendMessage: sendRealtimeMessage } = useRealtime({
+    clientId,
+    apiKey,
+    channelName: 'scroll',
+    onMessage: (message) => {
+      if (message.clientId === clientId) {
+        return;
+      }
 
-  const [realtimeChannel] = useChannel('control', 'scroll', (message) => {
-    if (message.clientId === clientId) {
-      return;
-    }
-
-    const toScrollY: number = message.data.scrollY;
-    window.scrollTo({ top: toScrollY, behavior: 'smooth' });
+      const toScrollY: number = message.data.scrollY;
+      window.scrollTo({ top: toScrollY, behavior: 'smooth' });
+    },
   });
 
   useEffect(() => {
     const handleScroll = debounce(() => {
-      realtimeChannel.publish('scroll', { scrollY: window.scrollY });
+      sendRealtimeMessage({ scrollY: window.scrollY });
     }, 200);
 
     window.addEventListener('scroll', handleScroll);
@@ -55,7 +58,7 @@ export default function PageContent({
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [realtimeChannel]);
+  }, [sendRealtimeMessage]);
 
   return <ReactMarkdown className="prose mx-auto py-12">{page.content}</ReactMarkdown>;
 }
