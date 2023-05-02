@@ -1,7 +1,7 @@
 import { useRealtime } from '@/hooks/useRealtime';
 import { apiService } from '@/services/api.service';
 import { PageContentDataType } from '@/types';
-import { debounce } from '@/utils';
+import { convertScrollPercent, debounce } from '@/utils';
 
 import { GetServerSidePropsContext } from 'next';
 import { useEffect } from 'react';
@@ -43,14 +43,16 @@ export default function PageContent({
         return;
       }
 
-      const toScrollY: number = message.data.scrollY;
+      const { scrollPercent } = message.data;
+      const toScrollY = convertScrollPercent({ fromPercent: scrollPercent });
       window.scrollTo({ top: toScrollY, behavior: 'smooth' });
     },
   });
 
   useEffect(() => {
     const handleScroll = debounce(() => {
-      sendRealtimeMessage({ scrollY: window.scrollY });
+      const scrollPercent = convertScrollPercent();
+      sendRealtimeMessage({ scrollPercent });
     }, 200);
 
     window.addEventListener('scroll', handleScroll);
