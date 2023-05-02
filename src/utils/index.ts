@@ -1,7 +1,9 @@
-export function debounce(fn: (...args: []) => unknown, ms = 300) {
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function debounce(fn: (...args: any[]) => unknown, ms = 300) {
   let timeoutId: ReturnType<typeof setTimeout>;
 
-  const debounced = (...args: []) => {
+  const debounced = (...args: any[]) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => fn(...args), ms);
   };
@@ -13,7 +15,7 @@ export function convertScrollPercent(params?: { fromPercent: number }) {
   const { fromPercent } = params ?? {};
 
   const scrollTopOffset = document.body.scrollHeight - window.innerHeight;
-  if (fromPercent) {
+  if (fromPercent !== undefined) {
     const toScrollY = scrollTopOffset * (fromPercent / 100);
     return Math.round(toScrollY);
   }
