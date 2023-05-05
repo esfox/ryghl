@@ -30,7 +30,7 @@ export function usePages() {
       }
 
       if (pageToFetch) {
-        const pageContentData = await apiService.getPageContent(pageToFetch, withPreview);
+        const pageContentData = await apiService.getPageContent(pageToFetch, { withPreview });
         setPagesContentData((oldPagesContentData) => [...oldPagesContentData, pageContentData]);
       }
     },

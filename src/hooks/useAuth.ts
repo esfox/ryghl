@@ -1,6 +1,4 @@
-import { localStorageUtil } from '@/utils/localStorage.util';
-
-import { ResponseCodes } from 'http-constants-ts';
+import Cookies from 'js-cookie';
 import ky from 'ky';
 
 export function useAuth() {
@@ -9,27 +7,8 @@ export function useAuth() {
       .post('/api/login', { json: { password } })
       .json<{ sessionToken: string }>();
 
-    localStorageUtil.sessionToken.set(sessionToken);
+    Cookies.set('auth', sessionToken);
   };
 
-  const checkLoggedIn = async () => {
-    const sessionToken = localStorageUtil.sessionToken.get();
-    if (!sessionToken) {
-      throw new Error('No session token');
-    }
-
-    const response = await ky.post('/api/auth', {
-      headers: {
-        Authorization: sessionToken,
-      },
-    });
-
-    if (response.status === ResponseCodes.UNAUTHORIZED) {
-      throw new Error('Unauthorized');
-    }
-
-    return true;
-  };
-
-  return { login, checkLoggedIn };
+  return { login };
 }

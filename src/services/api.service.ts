@@ -3,13 +3,24 @@ import { PageContentDataType, PageType } from '@/types';
 import ky from 'ky';
 
 const apiBaseUrl = process.env.API_URL || '';
-const api = ky.create({ prefixUrl: `${apiBaseUrl}/api` });
 
 export const apiService = {
+  api: ky.create({ prefixUrl: `${apiBaseUrl}/api` }),
+
+  withCookies(cookies: Record<string, string>) {
+    this.api = this.api.extend({
+      headers: {
+        Cookie: new URLSearchParams(cookies).toString(),
+      },
+    });
+
+    return this;
+  },
+
   // TODO: Implement pagination
   async getPages() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { results } = await api.get('pages').json<any>();
+    const { results } = await this.api.get('pages').json<any>();
 
     /* Map the notion pages to an instance of `PageType` */
     const pagesResult: PageType[] = [];
@@ -25,17 +36,20 @@ export const apiService = {
     return pagesResult;
   },
 
-  async getPageContent(pageId: string, withPreview = false) {
-    const data: PageContentDataType = await api
-      .get(`pages/${pageId}`, {
-        searchParams: new URLSearchParams({ withPreview: withPreview.toString() }),
-      })
+  async getPageContent(pageId: string, options?: { withPreview?: boolean }) {
+    const { withPreview } = options || {};
+    const searchParams = new URLSearchParams();
+    if (withPreview) {
+      searchParams.set('withPreview', 'true');
+    }
+
+    const data: PageContentDataType = await this.api
+      .get(`pages/${pageId}`, { searchParams })
       .json();
     return data;
   },
 
   async getRealtimeConfig() {
-    // TODO: Include session token in headers
-    return api.post('realtime-config').json();
+    return this.api.post('realtime-config').json();
   },
 };

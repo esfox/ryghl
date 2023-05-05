@@ -18,7 +18,7 @@ export default function Login() {
     const password = form.password.value;
     try {
       await login(password);
-      await replace('/');
+      await replace('/pages');
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);

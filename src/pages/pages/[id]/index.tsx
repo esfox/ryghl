@@ -9,10 +9,10 @@ import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const pageId = context.query.id as string;
-
+  const cookies = context.req.cookies as Record<string, string>;
   const [pageContentResponse, realtimeConfig] = await Promise.all([
-    apiService.getPageContent(pageId),
-    apiService.getRealtimeConfig(),
+    apiService.withCookies(cookies).getPageContent(pageId),
+    apiService.withCookies(cookies).getRealtimeConfig(),
   ]);
 
   return {

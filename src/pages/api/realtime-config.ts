@@ -11,8 +11,6 @@ export default function handler(request: NextApiRequest, response: NextApiRespon
     return response.status(ResponseCodes.METHOD_NOT_ALLOWED).send('Method Not Allowed');
   }
 
-  // TODO: Implement session token validation
-
   /* Generate a unique client ID for one instance, which is used to determine
     which client is which in handling realtime on the client-side */
   const clientId = randomUUID();
