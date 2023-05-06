@@ -45,6 +45,7 @@ export const apiService = {
     const data: PageContentDataType = await this.api
       .get(`pages/${pageId}`, { searchParams })
       .json();
+
     return data;
   },
 

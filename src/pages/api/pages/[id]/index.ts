@@ -17,19 +17,22 @@ export default async function handler(request: NextApiRequest, response: NextApi
     return response.status(ResponseCodes.BAD_REQUEST).send('Bad Request');
   }
 
-  let content;
+  let markdownBlocks;
   try {
-    const markdownBlocks = await notionToMarkdown.pageToMarkdown(pageId);
-    content = notionToMarkdown.toMarkdownString(markdownBlocks);
+    markdownBlocks = await notionToMarkdown.pageToMarkdown(pageId);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(error);
-
     const notionError = error as APIResponseError;
     return response
       .status(notionError.status ?? 500)
       .send(notionError.message ?? 'Internal Server Error');
   }
+
+  if (markdownBlocks.length === 0) {
+    return response.status(ResponseCodes.NOT_FOUND).send('Not Found');
+  }
+
+  const content = notionToMarkdown.toMarkdownString(markdownBlocks);
 
   const { withPreview } = query;
   const responseData: PageContentDataType = {

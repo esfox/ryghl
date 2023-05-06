@@ -3,36 +3,54 @@ import { apiService } from '@/services/api.service';
 import { PageContentDataType } from '@/types';
 import { convertScrollPercent, debounce } from '@/utils';
 
-import { GetServerSidePropsContext } from 'next';
+import { HTTPError } from 'ky';
+import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useEffect, useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const pageId = context.query.id as string;
-  const cookies = context.req.cookies as Record<string, string>;
-  const [pageContentResponse, realtimeConfig] = await Promise.all([
-    apiService.withCookies(cookies).getPageContent(pageId),
-    apiService.withCookies(cookies).getRealtimeConfig(),
-  ]);
-
-  return {
-    props: {
-      page: pageContentResponse,
-      realtimeConfig,
-    },
-  };
-}
-
-export default function PageContent({
-  page,
-  realtimeConfig,
-}: {
+interface PageContentProps {
   page: PageContentDataType;
   realtimeConfig: {
     clientId: string;
     apiKey: string;
   };
-}) {
+}
+
+export async function getServerSideProps(
+  context: GetServerSidePropsContext
+): Promise<GetServerSidePropsResult<PageContentProps> | undefined> {
+  const pageId = context.query.id as string;
+  const cookies = context.req.cookies as Record<string, string>;
+
+  try {
+    const results = await Promise.all([
+      apiService.withCookies(cookies).getPageContent(pageId),
+      apiService.withCookies(cookies).getRealtimeConfig(),
+    ]);
+
+    const pageContentResponse = results[0];
+    const realtimeConfig = results[1] as PageContentProps['realtimeConfig'];
+
+    return {
+      props: {
+        page: pageContentResponse ?? {},
+        realtimeConfig: realtimeConfig ?? {},
+      },
+    };
+  } catch (error) {
+    const httpError = error as HTTPError;
+    if (httpError.response.status === 404) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/404',
+        },
+      };
+    }
+  }
+}
+
+export default function PageContent({ page, realtimeConfig }: PageContentProps) {
   const { clientId, apiKey } = realtimeConfig;
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
   const { sendMessage: sendRealtimeMessage } = useRealtime({
