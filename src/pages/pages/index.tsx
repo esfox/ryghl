@@ -2,6 +2,7 @@ import { PageGridItem } from '@/components/PageGridItem';
 import { usePages } from '@/hooks/usePages';
 import { PageType } from '@/types';
 
+import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
 import { useEffectOnce } from 'react-use';
 
@@ -38,8 +39,11 @@ export default function Pages() {
 
   return (
     <>
-      <div className="navbar bg-base-100">
-        <span className="font-bold normal-case text-xl px-4">Pages</span>
+      <div className="navbar bg-base-100 flex justify-between px-4">
+        <span className="font-bold normal-case text-xl px-2">Pages</span>
+        <Link href="/pages/new">
+          <button className="btn btn-primary btn-sm px-6">New Page</button>
+        </Link>
       </div>
       {isLoadingPages ? (
         <div className="h-full w-full grid place-items-center">Loading...</div>

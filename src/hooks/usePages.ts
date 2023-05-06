@@ -1,7 +1,7 @@
 import { apiService } from '@/services/api.service';
 import { PageContentDataType } from '@/types';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
 export function usePages() {
@@ -61,6 +61,11 @@ export function usePages() {
     [pagesContentData]
   );
 
+  const { mutate: savePage, isLoading: isSavingPage } = useMutation({
+    mutationFn: ({ title, content }: { title: string; content: string }) =>
+      apiService.savePage(title, content),
+  });
+
   return {
     pages,
     pagesContentData,
@@ -72,5 +77,8 @@ export function usePages() {
     fetchPages,
     fetchPagesContent,
     fetchPageContent,
+
+    savePage,
+    isSavingPage,
   };
 }

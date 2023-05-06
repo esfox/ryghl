@@ -49,6 +49,19 @@ export const apiService = {
     return data;
   },
 
+  async savePage(title: string, content: string) {
+    const data = await this.api
+      .post('pages/new', {
+        body: content,
+        headers: {
+          title,
+        },
+      })
+      .json();
+
+    return data;
+  },
+
   async getRealtimeConfig() {
     return this.api.post('realtime-config').json();
   },

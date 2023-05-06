@@ -8,7 +8,8 @@
     "notionhq",
     "mdimg",
     "tailwindcss",
-    "daisyui"
+    "daisyui",
+    "toastui"
   ],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }

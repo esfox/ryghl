@@ -10,6 +10,9 @@ dependencies:
   '@tanstack/react-query':
     specifier: ^4.29.5
     version: 4.29.5(react-dom@18.2.0)(react@18.2.0)
+  '@toast-ui/react-editor':
+    specifier: ^3.2.3
+    version: 3.2.3(react@18.2.0)
   '@types/js-cookie':
     specifier: ^3.0.3
     version: 3.0.3
@@ -25,9 +28,15 @@ dependencies:
   autoprefixer:
     specifier: 10.4.14
     version: 10.4.14(postcss@8.4.23)
+  classnames:
+    specifier: ^2.3.2
+    version: 2.3.2
   cloudflare-client:
     specifier: ^0.3.2
     version: 0.3.2
+  cloudflare-r2:
+    specifier: ^1.0.0
+    version: 1.0.0
   daisyui:
     specifier: ^2.51.6
     version: 2.51.6(autoprefixer@10.4.14)(postcss@8.4.23)
@@ -1011,6 +1020,34 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
+  /@toast-ui/editor@3.2.2:
+    resolution:
+      {
+        integrity: sha512-ASX7LFjN2ZYQJrwmkUajPs7DRr9FsM1+RQ82CfTO0Y5ZXorBk1VZS4C2Dpxinx9kl55V4F8/A2h2QF4QMDtRbA==,
+      }
+    dependencies:
+      dompurify: 2.4.5
+      prosemirror-commands: 1.5.1
+      prosemirror-history: 1.3.1
+      prosemirror-inputrules: 1.2.0
+      prosemirror-keymap: 1.2.1
+      prosemirror-model: 1.19.0
+      prosemirror-state: 1.4.2
+      prosemirror-view: 1.31.1
+    dev: false
+
+  /@toast-ui/react-editor@3.2.3(react@18.2.0):
+    resolution:
+      {
+        integrity: sha512-86QdgiOkBeSwRBEUWRKsTpnm6yu5j9HNJ3EfQN8EGcd7kI8k8AhExXyUJ3NNgNTzN7FfSKMw+1VaCDDC+aZ3dw==,
+      }
+    peerDependencies:
+      react: ^17.0.1
+    dependencies:
+      '@toast-ui/editor': 3.2.2
+      react: 18.2.0
+    dev: false
+
   /@types/cacheable-request@6.0.3:
     resolution:
       {
@@ -1426,6 +1463,15 @@ packages:
       fast-json-stable-stringify: 2.1.0
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
+
+  /amazon-s3@2.0.0:
+    resolution:
+      {
+        integrity: sha512-S3xKKWuQbO6GvdgJk6c4CEHAopPYTOZvyjEXWgxUUL50ozmOMXaQpMnpyGLSnlUrZlGPNqpCcKOEAK8VbGzWbw==,
+      }
+    dependencies:
+      crypto-js: 3.1.9-1
+    dev: false
 
   /ansi-escapes@4.3.2:
     resolution:
@@ -1930,6 +1976,13 @@ packages:
       }
     dev: false
 
+  /classnames@2.3.2:
+    resolution:
+      {
+        integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==,
+      }
+    dev: false
+
   /clean-stack@2.2.0:
     resolution:
       {
@@ -2013,6 +2066,15 @@ packages:
       {
         integrity: sha512-4ezf1UkUHxCn0WGwhrrO/ZL/OFxbcVkbNvEyr4UN0U6rFOpPRPfMPKUA5faItDV13ram+KeujdMKqtUkUdvLKA==,
       }
+    dev: false
+
+  /cloudflare-r2@1.0.0:
+    resolution:
+      {
+        integrity: sha512-AKAsuvDnOxKMTeXI1F8TL/+DzmUolR+5UcQZfo4KOWs7OcUAFjZfb+qLm8iP+JjADnQciA+PxPYteQT1XwwGJg==,
+      }
+    dependencies:
+      amazon-s3: 2.0.0
     dev: false
 
   /color-convert@1.9.3:
@@ -2225,6 +2287,13 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  /crypto-js@3.1.9-1:
+    resolution:
+      {
+        integrity: sha512-W93aKztssqf29OvUlqfikzGyYbD1rpkXvGP9IQ1JchLY3bxaLXZSWYbwrtib2vk8DobrDzX7PIXcDWHp0B6Ymw==,
+      }
+    dev: false
 
   /crypto-random-string@2.0.0:
     resolution:
@@ -2665,6 +2734,13 @@ packages:
     engines: { node: '>= 4' }
     dependencies:
       domelementtype: 2.3.0
+    dev: false
+
+  /dompurify@2.4.5:
+    resolution:
+      {
+        integrity: sha512-jggCCd+8Iqp4Tsz0nIvpcb22InKEBrGz5dw3EQJMs8HPJDsKbFIO3STYtAvCfDx26Muevn1MHVI0XxjgFfmiSA==,
+      }
     dev: false
 
   /domutils@3.1.0:
@@ -5593,6 +5669,13 @@ packages:
       type-check: 0.4.0
       word-wrap: 1.2.3
 
+  /orderedmap@2.1.0:
+    resolution:
+      {
+        integrity: sha512-/pIFexOm6S70EPdznemIz3BQZoJ4VTFrhqzu0ACBqBgeLsLxq8e6Jim63ImIfwW/zAD1AlXpRMlOv3aghmo4dA==,
+      }
+    dev: false
+
   /p-cancelable@2.1.1:
     resolution:
       {
@@ -5949,6 +6032,89 @@ packages:
       {
         integrity: sha512-kma4U7AFCTwpqq5twzC1YVIDXSqg6qQK6JN0smOw8fgRy1OkMi0CYSzFmsy6dnqSenamAtj0CyXMUJ1Mf6oROg==,
       }
+    dev: false
+
+  /prosemirror-commands@1.5.1:
+    resolution:
+      {
+        integrity: sha512-ga1ga/RkbzxfAvb6iEXYmrEpekn5NCwTb8w1dr/gmhSoaGcQ0VPuCzOn5qDEpC45ql2oDkKoKQbRxLJwKLpMTQ==,
+      }
+    dependencies:
+      prosemirror-model: 1.19.0
+      prosemirror-state: 1.4.2
+      prosemirror-transform: 1.7.1
+    dev: false
+
+  /prosemirror-history@1.3.1:
+    resolution:
+      {
+        integrity: sha512-YMV/IWBZ+LZSfaNcBbPcaQUiAiJRYFyJW2aapuNzL8nhIRsI7fIO0ykJFSe802+mWeoTsVJ1jxvRWPYqaUqljQ==,
+      }
+    dependencies:
+      prosemirror-state: 1.4.2
+      prosemirror-transform: 1.7.1
+      prosemirror-view: 1.31.1
+      rope-sequence: 1.3.3
+    dev: false
+
+  /prosemirror-inputrules@1.2.0:
+    resolution:
+      {
+        integrity: sha512-eAW/M/NTSSzpCOxfR8Abw6OagdG0MiDAiWHQMQveIsZtoKVYzm0AflSPq/ymqJd56/Su1YPbwy9lM13wgHOFmQ==,
+      }
+    dependencies:
+      prosemirror-state: 1.4.2
+      prosemirror-transform: 1.7.1
+    dev: false
+
+  /prosemirror-keymap@1.2.1:
+    resolution:
+      {
+        integrity: sha512-kVK6WGC+83LZwuSJnuCb9PsADQnFZllt94qPP3Rx/vLcOUV65+IbBeH2nS5cFggPyEVJhGkGrgYFRrG250WhHQ==,
+      }
+    dependencies:
+      prosemirror-state: 1.4.2
+      w3c-keyname: 2.2.6
+    dev: false
+
+  /prosemirror-model@1.19.0:
+    resolution:
+      {
+        integrity: sha512-/CvFGJnwc41EJSfDkQLly1cAJJJmBpZwwUJtwZPTjY2RqZJfM8HVbCreOY/jti8wTRbVyjagcylyGoeJH/g/3w==,
+      }
+    dependencies:
+      orderedmap: 2.1.0
+    dev: false
+
+  /prosemirror-state@1.4.2:
+    resolution:
+      {
+        integrity: sha512-puuzLD2mz/oTdfgd8msFbe0A42j5eNudKAAPDB0+QJRw8cO1ygjLmhLrg9RvDpf87Dkd6D4t93qdef00KKNacQ==,
+      }
+    dependencies:
+      prosemirror-model: 1.19.0
+      prosemirror-transform: 1.7.1
+      prosemirror-view: 1.31.1
+    dev: false
+
+  /prosemirror-transform@1.7.1:
+    resolution:
+      {
+        integrity: sha512-VteoifAfpt46z0yEt6Fc73A5OID9t/y2QIeR5MgxEwTuitadEunD/V0c9jQW8ziT8pbFM54uTzRLJ/nLuQjMxg==,
+      }
+    dependencies:
+      prosemirror-model: 1.19.0
+    dev: false
+
+  /prosemirror-view@1.31.1:
+    resolution:
+      {
+        integrity: sha512-9NKJdXnGV4+1qFRi16XFZxpnx6zNok9MEj/HElkqUJ1HtOyKOICffKxqoXUUCAdHrrP+yMDvdXc6wT7GGWBL3A==,
+      }
+    dependencies:
+      prosemirror-model: 1.19.0
+      prosemirror-state: 1.4.2
+      prosemirror-transform: 1.7.1
     dev: false
 
   /proxy-from-env@1.1.0:
@@ -6339,6 +6505,13 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.3
+
+  /rope-sequence@1.3.3:
+    resolution:
+      {
+        integrity: sha512-85aZYCxweiD5J8yTEbw+E6A27zSnLPNDL0WfPdw3YYodq7WjnTKo0q4dtyQ2gz23iPT8Q9CUyJtAaUNcTxRf5Q==,
+      }
+    dev: false
 
   /rtl-css-js@1.16.1:
     resolution:
@@ -7323,6 +7496,13 @@ packages:
         integrity: sha512-eOpPHogvorZRobNqJGhapa0JdwaxpjVvyBp0QIUMRMSf8ZAlqOdEquKuRmw9Qwu0qXtJIWqFtMkmvJjUZmMjVA==,
       }
     dev: true
+
+  /w3c-keyname@2.2.6:
+    resolution:
+      {
+        integrity: sha512-f+fciywl1SJEniZHD6H+kUO8gOnwIr7f4ijKA6+ZvJFjeGi1r4PDLl53Ayud9O/rk64RqgoQine0feoeOU0kXg==,
+      }
+    dev: false
 
   /webidl-conversions@3.0.1:
     resolution:
