@@ -1,11 +1,10 @@
+import { API_URL } from '@/constants';
 import { PageContentDataType, PageType } from '@/types';
 
 import ky from 'ky';
 
-const apiBaseUrl = process.env.API_URL || '';
-
 export const apiService = {
-  api: ky.create({ prefixUrl: `${apiBaseUrl}/api` }),
+  api: ky.create({ prefixUrl: `${API_URL}/api` }),
 
   withCookies(cookies: Record<string, string>) {
     this.api = this.api.extend({

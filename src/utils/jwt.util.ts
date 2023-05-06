@@ -1,21 +1,16 @@
+import { JWT_EXPIRES_IN, JWT_SECRET } from '@/constants';
+
 import { JWTPayload, SignJWT, jwtVerify } from 'jose';
 
-const jwtSecret = process.env.JWT_SECRET;
-if (!jwtSecret) {
-  throw new Error('No JWT Secret');
-}
-
-const jwtExpiresIn = process.env.JWT_EXPIRES_IN || '7d';
-
 function getEncodedSecret() {
-  return new TextEncoder().encode(jwtSecret);
+  return new TextEncoder().encode(JWT_SECRET);
 }
 
 export function signJwt(data: JWTPayload) {
   const issuedAt = Math.floor(Date.now() / 1000);
   const token = new SignJWT(data)
     .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
-    .setExpirationTime(jwtExpiresIn)
+    .setExpirationTime(JWT_EXPIRES_IN)
     .setIssuedAt(issuedAt)
     .setNotBefore(issuedAt)
     .sign(getEncodedSecret());

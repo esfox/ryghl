@@ -1,16 +1,11 @@
+import { CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_KEY, CLOUDFLARE_KV_NAMESPACE_ID } from '@/constants';
+
 import { kv as kvClient } from 'cloudflare-client';
 
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-const apiKey = process.env.CLOUDFLARE_API_KEY;
-const namespaceId = process.env.CLOUDFLARE_KV_NAMESPACE_ID;
-if (!accountId || !apiKey || !namespaceId) {
-  throw new Error('Missing Cloudflare environment variables');
-}
-
 const kvNamespace = kvClient({
-  accountId,
-  accessToken: apiKey,
-}).namespace(namespaceId);
+  accountId: CLOUDFLARE_ACCOUNT_ID,
+  accessToken: CLOUDFLARE_API_KEY,
+}).namespace(CLOUDFLARE_KV_NAMESPACE_ID);
 
 export function readKeyValuePair<T>(key: string): Promise<T | undefined> {
   return kvNamespace.get(key, { decode: false });

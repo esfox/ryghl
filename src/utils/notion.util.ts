@@ -1,8 +1,9 @@
+import { NOTION_INTEGRATION_SECRET } from '@/constants';
+
 import { Client } from '@notionhq/client';
 
-const notionIntegrationSecret = process.env.NOTION_INTEGRATION_SECRET;
 const client = new Client({
-  auth: notionIntegrationSecret,
+  auth: NOTION_INTEGRATION_SECRET,
 });
 
 export const notion = {

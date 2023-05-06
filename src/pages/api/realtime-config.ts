@@ -1,10 +1,10 @@
+import { ABLY_API_KEY } from '@/constants';
+
 import { Methods, ResponseCodes } from 'http-constants-ts';
 
 import { randomUUID } from 'crypto';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const ablyApiKey = process.env.ABLY_API_KEY;
 
 export default function handler(request: NextApiRequest, response: NextApiResponse) {
   if (request.method !== Methods.POST) {
@@ -17,6 +17,6 @@ export default function handler(request: NextApiRequest, response: NextApiRespon
 
   return response.send({
     clientId,
-    apiKey: ablyApiKey,
+    apiKey: ABLY_API_KEY,
   });
 }

@@ -1,13 +1,12 @@
+import { SESSION_EXPIRES_IN } from '@/constants';
 import { readKeyValuePair, writeKeyValuePair } from '@/utils/cloudflare.util';
 
 import { randomUUID } from 'crypto';
 
-const sessionExpiresIn = process.env.SESSION_EXPIRES_IN || 60 * 60 * 24 * 7;
-
 export async function createSession() {
   const sessionId = randomUUID();
   await writeKeyValuePair(sessionId, new Date().toISOString(), {
-    expiresInSeconds: Number(sessionExpiresIn),
+    expiresInSeconds: Number(SESSION_EXPIRES_IN),
   });
   return sessionId;
 }
