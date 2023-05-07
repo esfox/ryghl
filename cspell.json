@@ -9,7 +9,8 @@
     "mdimg",
     "tailwindcss",
     "daisyui",
-    "toastui"
+    "toastui",
+    "supabase"
   ],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }
