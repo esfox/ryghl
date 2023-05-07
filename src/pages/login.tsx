@@ -1,5 +1,6 @@
-import { useAuth } from '@/hooks/useAuth';
+import { apiService } from '@/services/api.service';
 
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { FormEvent } from 'react';
 import { toast } from 'react-hot-toast';
@@ -9,8 +10,11 @@ interface LoginForm extends HTMLFormElement {
 }
 
 export default function Login() {
-  const { login } = useAuth();
   const { replace } = useRouter();
+
+  const { mutateAsync: login } = useMutation({
+    mutationFn: (password: string) => apiService.login(password),
+  });
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

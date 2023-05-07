@@ -1,6 +1,7 @@
 import { API_URL } from '@/constants';
 import { PageContentDataType, PageType } from '@/types';
 
+import Cookies from 'js-cookie';
 import ky from 'ky';
 
 export const apiService = {
@@ -14,6 +15,14 @@ export const apiService = {
     });
 
     return this;
+  },
+
+  async login(password: string) {
+    const { sessionToken } = await this.api
+      .post('login', { json: { password } })
+      .json<{ sessionToken: string }>();
+
+    Cookies.set('auth', sessionToken);
   },
 
   // TODO: Implement pagination
