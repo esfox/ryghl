@@ -12,8 +12,8 @@ export default function App({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <main className="h-full">
         <Component {...pageProps} />
-        <Toaster />
       </main>
+      <Toaster />
     </QueryClientProvider>
   );
 }

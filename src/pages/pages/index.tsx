@@ -12,7 +12,7 @@ type PageGridItemData = {
 };
 
 export default function Pages() {
-  const { pages, pagesContentData, isLoadingPages, fetchPages, fetchPagesContent } = usePages();
+  const { pages, pagesContent, isFetchingPages, fetchPages, fetchPagesContent } = usePages();
 
   useEffectOnce(() => {
     fetchPages();
@@ -25,7 +25,7 @@ export default function Pages() {
   const pageGridData = useMemo<PageGridItemData[]>(() => {
     const pagesData = [];
     for (const pageListItem of pages) {
-      const pageContent = pagesContentData.find(
+      const pageContent = pagesContent.find(
         (pageContentData) => pageContentData.pageId === pageListItem.id
       );
       const pageData: PageGridItemData = {
@@ -35,7 +35,7 @@ export default function Pages() {
       pagesData.push(pageData);
     }
     return pagesData;
-  }, [pages, pagesContentData]);
+  }, [pages, pagesContent]);
 
   return (
     <>
@@ -45,7 +45,7 @@ export default function Pages() {
           <button className="btn btn-primary btn-sm px-6">New Page</button>
         </Link>
       </div>
-      {isLoadingPages ? (
+      {isFetchingPages ? (
         <div className="h-full w-full grid place-items-center">Loading...</div>
       ) : (
         <div className="grid grid-cols-4 gap-x-4 gap-y-12 p-4">

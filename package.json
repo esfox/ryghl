@@ -18,7 +18,6 @@
     "autoprefixer": "10.4.14",
     "classnames": "^2.3.2",
     "cloudflare-client": "^0.3.2",
-    "cloudflare-r2": "^1.0.0",
     "daisyui": "^2.51.6",
     "http-constants-ts": "^1.0.7",
     "jose": "^4.14.4",

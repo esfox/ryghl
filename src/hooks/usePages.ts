@@ -8,8 +8,8 @@ export function usePages() {
   const {
     refetch: fetchPages,
     data: pages,
-    isLoading: isLoadingPages,
-    // error: pagesError,
+    isLoading: isFetchingPages,
+    error: fetchPagesError,
   } = useQuery({
     queryKey: ['pages'],
     queryFn: () => apiService.getPages(),
@@ -17,14 +17,14 @@ export function usePages() {
     initialData: [],
   });
 
-  const [pagesContentData, setPagesContentData] = useState<PageContentDataType[]>([]);
+  const [pagesContent, setPagesContentData] = useState<PageContentDataType[]>([]);
 
   const fetchPagesContent = useCallback(
     async (withPreview?: boolean) => {
       let pageToFetch: string | undefined;
       for (const page of pages) {
         const pageId = page.id;
-        if (pagesContentData.every((pageContentData) => pageContentData.pageId !== pageId)) {
+        if (pagesContent.every((pageContentData) => pageContentData.pageId !== pageId)) {
           pageToFetch = pageId;
         }
       }
@@ -34,7 +34,7 @@ export function usePages() {
         setPagesContentData((oldPagesContentData) => [...oldPagesContentData, pageContentData]);
       }
     },
-    [pages, pagesContentData]
+    [pages, pagesContent]
   );
 
   const [currentPageContent, setCurrentPageContent] = useState<PageContentDataType>();
@@ -43,9 +43,7 @@ export function usePages() {
     async (pageId: string) => {
       setIsLoadingCurrentPageContent(true);
 
-      const pageContent = pagesContentData.find(
-        (pageContentData) => pageContentData.pageId === pageId
-      );
+      const pageContent = pagesContent.find((pageContentData) => pageContentData.pageId === pageId);
 
       if (pageContent) {
         setCurrentPageContent(pageContent);
@@ -58,27 +56,33 @@ export function usePages() {
       setCurrentPageContent(pageContentResponse);
       setIsLoadingCurrentPageContent(false);
     },
-    [pagesContentData]
+    [pagesContent]
   );
 
-  const { mutate: savePage, isLoading: isSavingPage } = useMutation({
+  const {
+    mutateAsync: savePage,
+    isLoading: isSavingPage,
+    error: savePageError,
+  } = useMutation({
     mutationFn: ({ title, content }: { title: string; content: string }) =>
       apiService.savePage(title, content),
   });
 
   return {
     pages,
-    pagesContentData,
-    isLoadingPages,
+    fetchPages,
+    isFetchingPages,
+    fetchPagesError,
+
+    pagesContent,
+    fetchPagesContent,
 
     currentPageContent,
-    isLoadingCurrentPageContent,
-
-    fetchPages,
-    fetchPagesContent,
     fetchPageContent,
+    isLoadingCurrentPageContent,
 
     savePage,
     isSavingPage,
+    savePageError,
   };
 }

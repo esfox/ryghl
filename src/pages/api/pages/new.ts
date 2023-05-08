@@ -1,7 +1,4 @@
-/* eslint-disable import/order */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { putObject } from '@/utils/cloudflare.util';
+import { uploadFile } from '@/utils/supabase.util';
 
 import { ResponseCodes } from 'http-constants-ts';
 
@@ -16,6 +13,6 @@ export default async function handler(request: NextApiRequest, response: NextApi
   const content = request.body as string;
 
   // TODO: Validate title and content
-  const result = await putObject(`pages/${title}`, content);
+  const result = await uploadFile(`pages/${title}`, content);
   response.send(result);
 }

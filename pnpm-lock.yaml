@@ -25,9 +25,6 @@ dependencies:
   cloudflare-client:
     specifier: ^0.3.2
     version: 0.3.2
-  cloudflare-r2:
-    specifier: ^1.0.0
-    version: 1.0.0
   daisyui:
     specifier: ^2.51.6
     version: 2.51.6(autoprefixer@10.4.14)(postcss@8.4.23)
@@ -1536,15 +1533,6 @@ packages:
       uri-js: 4.4.1
     dev: true
 
-  /amazon-s3@2.0.0:
-    resolution:
-      {
-        integrity: sha512-S3xKKWuQbO6GvdgJk6c4CEHAopPYTOZvyjEXWgxUUL50ozmOMXaQpMnpyGLSnlUrZlGPNqpCcKOEAK8VbGzWbw==,
-      }
-    dependencies:
-      crypto-js: 3.1.9-1
-    dev: false
-
   /ansi-escapes@4.3.2:
     resolution:
       {
@@ -2184,15 +2172,6 @@ packages:
       }
     dev: false
 
-  /cloudflare-r2@1.0.0:
-    resolution:
-      {
-        integrity: sha512-AKAsuvDnOxKMTeXI1F8TL/+DzmUolR+5UcQZfo4KOWs7OcUAFjZfb+qLm8iP+JjADnQciA+PxPYteQT1XwwGJg==,
-      }
-    dependencies:
-      amazon-s3: 2.0.0
-    dev: false
-
   /color-convert@1.9.3:
     resolution:
       {
@@ -2404,13 +2383,6 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
-
-  /crypto-js@3.1.9-1:
-    resolution:
-      {
-        integrity: sha512-W93aKztssqf29OvUlqfikzGyYbD1rpkXvGP9IQ1JchLY3bxaLXZSWYbwrtib2vk8DobrDzX7PIXcDWHp0B6Ymw==,
-      }
-    dev: false
 
   /crypto-random-string@2.0.0:
     resolution:
