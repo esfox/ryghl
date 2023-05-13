@@ -7,6 +7,7 @@ import { HTTPError } from 'ky';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useEffect, useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
+import rehypeRaw from 'rehype-raw';
 
 interface PageContentProps {
   page: PageContentDataType;
@@ -92,5 +93,9 @@ export default function PageContent({ page, realtimeConfig }: PageContentProps) 
     };
   }, [sendRealtimeMessage, isControlledScrolling]);
 
-  return <ReactMarkdown className="prose mx-auto break-words p-8">{page.content}</ReactMarkdown>;
+  return (
+    <ReactMarkdown className="prose mx-auto break-words p-8" rehypePlugins={[rehypeRaw]}>
+      {page.content}
+    </ReactMarkdown>
+  );
 }

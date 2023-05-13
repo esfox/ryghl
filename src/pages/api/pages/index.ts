@@ -1,4 +1,5 @@
-import { notion } from '@/utils/notion.util';
+import { PageType, PagesQueryType } from '@/types';
+import { listFiles } from '@/utils/supabase.util';
 
 import { ResponseCodes } from 'http-constants-ts';
 
@@ -9,31 +10,37 @@ const defaults = {
   countPerPage: 10,
 };
 
-export default async function handler(request: NextApiRequest, response: NextApiResponse) {
-  const query = request.query ?? {};
+export default async function handler(
+  request: NextApiRequest,
+  response: NextApiResponse<string | PageType[]>
+) {
+  const query: PagesQueryType = request.query ?? {};
 
-  let { countPerPage } = defaults;
-  const queryCountPerPage = query.countPerPage;
-  if (queryCountPerPage) {
-    if (typeof queryCountPerPage !== 'number') {
+  let pageNumber = query.page ?? defaults.page;
+  if (pageNumber) {
+    pageNumber = 1;
+  }
+
+  let countPerPage = query.countPerPage ?? defaults.countPerPage;
+  if (countPerPage) {
+    if (typeof countPerPage !== 'number' || countPerPage < 0) {
       return response.status(ResponseCodes.BAD_REQUEST).send('Bad Request');
     }
-    countPerPage = Number(queryCountPerPage);
+
+    countPerPage = Number(countPerPage);
   }
 
-  try {
-    const notionResponse = await notion.client.search({
-      filter: {
-        value: 'page',
-        property: 'object',
-      },
-      page_size: countPerPage,
-    });
+  const { search } = query;
 
-    response.send(notionResponse);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
-    response.status(ResponseCodes.INTERNAL_SERVER_ERROR).send('Internal Server Error');
-  }
+  const data = await listFiles({ folder: 'pages', page: pageNumber, countPerPage, search });
+  const pages = data.map((file) => {
+    const page: PageType = {
+      id: file.name,
+      title: file.name,
+    };
+
+    return page;
+  });
+
+  response.json(pages);
 }

@@ -7,8 +7,6 @@ export const SESSION_EXPIRES_IN = Number(process.env.SESSION_EXPIRES_IN ?? 60 * 
 export const JWT_SECRET = process.env.JWT_SECRET as string;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN ?? '7d';
 
-export const NOTION_INTEGRATION_SECRET = process.env.NOTION_INTEGRATION_SECRET as string;
-
 export const ABLY_API_KEY = process.env.ABLY_API_KEY as string;
 
 export const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID as string;

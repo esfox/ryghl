@@ -8,3 +8,9 @@ export type PageContentDataType = {
   content: string;
   preview?: string;
 };
+
+export type PagesQueryType = {
+  page?: number;
+  countPerPage?: number;
+  search?: string;
+};

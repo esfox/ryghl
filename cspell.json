@@ -5,12 +5,12 @@
     "tanstack",
     "ryghltmffkdlem",
     "RYGHLTMFFKDLEM",
-    "notionhq",
     "mdimg",
     "tailwindcss",
     "daisyui",
     "toastui",
-    "supabase"
+    "supabase",
+    "rehype"
   ],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }
