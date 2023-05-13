@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
 import { useEffectOnce } from 'react-use';
 
-type PageGridItemData = {
+type PageGridItemDataType = {
   page: PageType;
   preview?: string;
 };
@@ -22,13 +22,13 @@ export default function Pages() {
     fetchPagesContent(true);
   }, [pages, fetchPagesContent]);
 
-  const pageGridData = useMemo<PageGridItemData[]>(() => {
+  const pageGridData = useMemo<PageGridItemDataType[]>(() => {
     const pagesData = [];
     for (const pageListItem of pages) {
       const pageContent = pagesContent.find(
         (pageContentData) => pageContentData.pageId === pageListItem.id
       );
-      const pageData: PageGridItemData = {
+      const pageData: PageGridItemDataType = {
         page: pageListItem,
         preview: pageContent?.preview,
       };

@@ -1,5 +1,5 @@
+import { pagesService } from '@/services/pages.service';
 import { PageContentDataType } from '@/types';
-import { downloadFile } from '@/utils/supabase.util';
 
 import { ResponseCodes } from 'http-constants-ts';
 import { convert2img } from 'mdimg';
@@ -13,7 +13,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
     return response.status(ResponseCodes.BAD_REQUEST).send('Bad Request');
   }
 
-  const file = await downloadFile(`pages/${pageId}`);
+  const file = await pagesService.get(pageId);
   const content = await file.text();
 
   const { withPreview } = query;

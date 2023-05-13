@@ -1,4 +1,4 @@
-import { uploadFile } from '@/utils/supabase.util';
+import { pagesService } from '@/services/pages.service';
 
 import { ResponseCodes } from 'http-constants-ts';
 
@@ -13,6 +13,6 @@ export default async function handler(request: NextApiRequest, response: NextApi
   const content = request.body as string;
 
   // TODO: Validate title and content
-  const result = await uploadFile(`pages/${title}`, content);
+  const result = await pagesService.create(`pages/${title}`, content);
   response.send(result);
 }

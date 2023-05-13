@@ -1,5 +1,5 @@
+import { pagesService } from '@/services/pages.service';
 import { PageType, PagesQueryType } from '@/types';
-import { listFiles } from '@/utils/supabase.util';
 
 import { ResponseCodes } from 'http-constants-ts';
 
@@ -32,7 +32,7 @@ export default async function handler(
 
   const { search } = query;
 
-  const data = await listFiles({ folder: 'pages', page: pageNumber, countPerPage, search });
+  const data = await pagesService.list({ page: pageNumber, countPerPage, search });
   const pages = data.map((file) => {
     const page: PageType = {
       id: file.name,
