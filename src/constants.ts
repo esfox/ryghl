@@ -2,7 +2,7 @@
 export const API_URL = process.env.API_URL ?? '';
 
 export const GLOBAL_PASSWORD = process.env.GLOBAL_PASSWORD as string;
-export const SESSION_EXPIRES_IN = process.env.SESSION_EXPIRES_IN ?? 60 * 60 * 24 * 7;
+export const SESSION_EXPIRES_IN = Number(process.env.SESSION_EXPIRES_IN ?? 60 * 60 * 24 * 7);
 
 export const JWT_SECRET = process.env.JWT_SECRET as string;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN ?? '7d';

@@ -1,4 +1,4 @@
-import { API_URL } from '@/constants';
+import { API_URL, SESSION_EXPIRES_IN } from '@/constants';
 import { PageContentDataType, PageType } from '@/types';
 
 import Cookies from 'js-cookie';
@@ -22,7 +22,9 @@ export const apiService = {
       .post('login', { json: { password } })
       .json<{ sessionToken: string }>();
 
-    Cookies.set('auth', sessionToken);
+    Cookies.set('auth', sessionToken, {
+      expires: SESSION_EXPIRES_IN / 24 / 60 / 60,
+    });
   },
 
   // TODO: Implement pagination
