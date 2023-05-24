@@ -19,25 +19,32 @@ export async function getServerSideProps(
   const pageId = context.query.id as string;
   const cookies = context.req.cookies as Record<string, string>;
 
-  try {
-    const pageContentResponse = await apiService.withCookies(cookies).getPageContent(pageId);
+  const redirect = () => ({
+    redirect: {
+      permanent: false,
+      destination: '/404',
+    },
+  });
 
-    return {
-      props: {
-        page: pageContentResponse ?? {},
-      },
-    };
+  let pageContentResponse;
+  try {
+    pageContentResponse = await apiService.withCookies(cookies).getPageContent(pageId);
   } catch (error) {
     const httpError = error as HTTPError;
     if (httpError.response.status === 404) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: '/404',
-        },
-      };
+      return redirect();
     }
   }
+
+  if (!pageContentResponse) {
+    return redirect();
+  }
+
+  return {
+    props: {
+      page: pageContentResponse ?? {},
+    },
+  };
 }
 
 export default function PageContent({ page }: PageContentProps) {
