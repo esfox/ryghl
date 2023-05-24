@@ -11,10 +11,6 @@ import rehypeRaw from 'rehype-raw';
 
 interface PageContentProps {
   page: PageContentDataType;
-  realtimeConfig: {
-    clientId: string;
-    apiKey: string;
-  };
 }
 
 export async function getServerSideProps(
@@ -24,18 +20,11 @@ export async function getServerSideProps(
   const cookies = context.req.cookies as Record<string, string>;
 
   try {
-    const results = await Promise.all([
-      apiService.withCookies(cookies).getPageContent(pageId),
-      apiService.withCookies(cookies).getRealtimeConfig(),
-    ]);
-
-    const pageContentResponse = results[0];
-    const realtimeConfig = results[1] as PageContentProps['realtimeConfig'];
+    const pageContentResponse = await apiService.withCookies(cookies).getPageContent(pageId);
 
     return {
       props: {
         page: pageContentResponse ?? {},
-        realtimeConfig: realtimeConfig ?? {},
       },
     };
   } catch (error) {
@@ -51,20 +40,14 @@ export async function getServerSideProps(
   }
 }
 
-export default function PageContent({ page, realtimeConfig }: PageContentProps) {
-  const { clientId, apiKey } = realtimeConfig;
+export default function PageContent({ page }: PageContentProps) {
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
-  const { sendMessage: sendRealtimeMessage } = useRealtime({
-    clientId,
-    apiKey,
-    channelName: 'scroll',
-    onMessage: (message) => {
-      if (message.clientId === clientId) {
-        return;
-      }
 
+  const { sendMessage: sendRealtimeMessage } = useRealtime({
+    channelName: 'scroll',
+    onMessage: (data) => {
       setIsControlledScrolling(true);
-      const { scrollPercent } = message.data;
+      const { scrollPercent } = data;
       const toScrollY = convertScrollPercent({ fromPercent: scrollPercent });
       window.scrollTo({ top: toScrollY, behavior: 'smooth' });
     },

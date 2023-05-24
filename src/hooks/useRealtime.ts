@@ -1,28 +1,56 @@
-import { configureAbly, useChannel } from '@ably-labs/react-hooks';
+import { SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY } from '@/constants';
 
-import type { Types } from 'ably';
-
-let isAblyConfigured = false;
+import { RealtimeChannel, createClient } from '@supabase/supabase-js';
+import { useRef, useState } from 'react';
+import { useEffectOnce } from 'react-use';
 
 export type UseRealtimeParams = {
-  clientId: string;
-  apiKey: string;
   channelName: string;
-  onMessage: (message: Types.Message) => void;
+  onMessage: (message: ScrollRealtimeEventType) => void;
 };
 
-export function useRealtime({ clientId, apiKey, channelName, onMessage }: UseRealtimeParams) {
-  if (!isAblyConfigured) {
-    configureAbly({ key: apiKey, clientId });
-    isAblyConfigured = true;
-  }
+type ScrollRealtimeEventType = {
+  scrollPercent: number;
+};
 
-  const [realtimeChannel] = useChannel(channelName, channelName, onMessage);
+const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY);
 
-  const sendMessage = (data: unknown) => realtimeChannel.publish(channelName, data);
+export function useRealtime({ channelName, onMessage }: UseRealtimeParams) {
+  const realtimeChannelRef = useRef<RealtimeChannel | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
 
-  return {
-    realtimeChannel,
-    sendMessage,
-  };
+  useEffectOnce(() => {
+    const subscription = supabase
+      .channel(channelName, {
+        config: {
+          broadcast: {
+            ack: true,
+          },
+        },
+      })
+      .on('broadcast', { event: channelName }, (data) => {
+        const eventData = data.payload as ScrollRealtimeEventType;
+        onMessage(eventData);
+      })
+      .subscribe((status) => {
+        setIsConnecting(true);
+        if (status === 'SUBSCRIBED') {
+          realtimeChannelRef.current = subscription;
+          setIsConnecting(false);
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  });
+
+  const sendMessage = (data: ScrollRealtimeEventType) =>
+    realtimeChannelRef.current?.send({
+      type: 'broadcast',
+      event: channelName,
+      payload: data,
+    });
+
+  return { sendMessage, isConnecting };
 }

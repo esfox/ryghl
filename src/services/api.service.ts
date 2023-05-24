@@ -59,8 +59,4 @@ export const apiService = {
 
     return data;
   },
-
-  async getRealtimeConfig() {
-    return this.api.post('realtime-config').json();
-  },
 };
