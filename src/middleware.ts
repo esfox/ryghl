@@ -2,6 +2,7 @@ import { checkSession } from '@/utils/sessions.util';
 
 import { verifyJwt } from './utils/jwt.util';
 
+import { errors } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
@@ -10,11 +11,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  const sessionTokenPayload = await verifyJwt(sessionToken);
+  const redirectToLogin = () => NextResponse.redirect(new URL('/login', request.url));
+
+  let sessionTokenPayload;
+  try {
+    sessionTokenPayload = await verifyJwt(sessionToken);
+  } catch (error) {
+    if (error instanceof errors.JWTExpired) {
+      return redirectToLogin();
+    }
+  }
+
   const { sessionId } = sessionTokenPayload as { sessionId: string };
   const session = await checkSession(sessionId);
   if (!session) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return redirectToLogin();
   }
 
   return NextResponse.next();
