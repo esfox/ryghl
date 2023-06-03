@@ -28,9 +28,12 @@ export const apiService = {
   },
 
   // TODO: Implement pagination
-  async getPages() {
-    const data = await this.api.get('pages').json<PageType[]>();
-    return data;
+  getPages() {
+    return this.api.get('pages').json<PageType[]>();
+  },
+
+  getPagePreview(pageTitle: string) {
+    return this.api.get(`pages/${pageTitle}/preview`).json<Omit<PageType, 'id'>>();
   },
 
   async getPageContent(pageId: string, options?: { withPreview?: boolean }) {
@@ -47,16 +50,15 @@ export const apiService = {
     return data;
   },
 
-  async savePage(title: string, content: string) {
-    const data = await this.api
+  savePage(title: string, content: string) {
+    return this.api
       .post('pages/new', {
         body: content,
         headers: {
           title,
         },
+        timeout: false,
       })
       .json();
-
-    return data;
   },
 };

@@ -7,11 +7,10 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 type PageGridItemProps = {
   page: PageType;
-  preview?: string;
 };
 
-export const PageGridItem: React.FC<PageGridItemProps> = ({ page, preview }) => {
-  const { title } = page;
+export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
+  const { title, preview } = page;
   return (
     <div className="grid place-items-center">
       <Link href={`/pages/${page.id}`} className="mt-5">

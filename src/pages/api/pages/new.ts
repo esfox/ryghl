@@ -13,6 +13,6 @@ export default async function handler(request: NextApiRequest, response: NextApi
   const content = request.body as string;
 
   // TODO: Validate title and content
-  const result = await pagesService.create(`pages/${title}`, content);
+  const result = await pagesService.create(title, content);
   response.send(result);
 }

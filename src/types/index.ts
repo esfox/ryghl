@@ -1,6 +1,7 @@
 export type PageType = {
   id: string;
   title: string;
+  preview?: string;
 };
 
 export type PageContentDataType = {

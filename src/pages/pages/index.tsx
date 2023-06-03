@@ -1,41 +1,62 @@
 import { PageGridItem } from '@/components/PageGridItem';
-import { usePages } from '@/hooks/usePages';
+import { apiService } from '@/services/api.service';
 import { PageType } from '@/types';
 
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
 import { useEffectOnce } from 'react-use';
 
-type PageGridItemDataType = {
-  page: PageType;
-  preview?: string;
-};
-
 export default function Pages() {
-  const { pages, pagesContent, isFetchingPages, fetchPages, fetchPagesContent } = usePages();
+  const {
+    refetch: fetchPages,
+    data: pages,
+    isLoading: isLoadingPages,
+  } = useQuery({
+    queryKey: ['pages'],
+    queryFn: () => apiService.getPages(),
+    enabled: false,
+    initialData: [],
+  });
+
+  const { refetch: fetchPagePreviews, data: pagePreviews } = useQuery({
+    queryKey: ['page_previews', pages],
+    queryFn: async () => {
+      const previewPromises = pages.map(({ title }) => apiService.getPagePreview(title));
+      const result = await Promise.allSettled(previewPromises);
+      const previews = [];
+      for (const item of result) {
+        if (item.status === 'fulfilled') {
+          previews.push(item.value);
+        }
+      }
+
+      return previews;
+    },
+    enabled: false,
+    initialData: [],
+    retry: false,
+  });
 
   useEffectOnce(() => {
     fetchPages();
   });
 
   useEffect(() => {
-    fetchPagesContent(true);
-  }, [pages, fetchPagesContent]);
+    if (pages.length !== 0) {
+      fetchPagePreviews();
+    }
+  }, [pages, fetchPagePreviews]);
 
-  const pageGridData = useMemo<PageGridItemDataType[]>(() => {
+  const pageGridData = useMemo<PageType[]>(() => {
     const pagesData = [];
-    for (const pageListItem of pages) {
-      const pageContent = pagesContent.find(
-        (pageContentData) => pageContentData.pageId === pageListItem.id
-      );
-      const pageData: PageGridItemDataType = {
-        page: pageListItem,
-        preview: pageContent?.preview,
-      };
+    for (const pageItem of pages) {
+      const pagePreview = pagePreviews.find(({ title }) => pageItem.id === title);
+      const pageData: PageType = { ...pageItem, preview: pagePreview?.preview };
       pagesData.push(pageData);
     }
     return pagesData;
-  }, [pages, pagesContent]);
+  }, [pages, pagePreviews]);
 
   return (
     <>
@@ -45,13 +66,13 @@ export default function Pages() {
           <button className="btn btn-primary btn-sm px-6">New Page</button>
         </Link>
       </div>
-      {isFetchingPages ? (
+      {isLoadingPages ? (
         <div className="h-full w-full grid place-items-center">Loading...</div>
       ) : (
         <div className="grid grid-cols-4 gap-x-4 gap-y-12 p-4">
           {pageGridData &&
-            pageGridData.map(({ page, preview }, index) => (
-              <PageGridItem key={`${index}_${Date.now()}`} page={page} preview={preview} />
+            pageGridData.map((page, index) => (
+              <PageGridItem key={`${index}_${Date.now()}`} page={page} />
             ))}
         </div>
       )}
