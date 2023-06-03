@@ -32,15 +32,21 @@ export default async function handler(
 
   const { search } = query;
 
-  const data = await pagesService.list({ page: pageNumber, countPerPage, search });
-  const pages = data.map((file) => {
+  const files = await pagesService.list({ page: pageNumber, countPerPage, search });
+  const pages = [];
+  for (const { name } of files) {
+    if (name === '.emptyFolderPlaceholder') {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
     const page: PageType = {
-      id: file.name,
-      title: file.name,
+      id: name,
+      title: name,
     };
 
-    return page;
-  });
+    pages.push(page);
+  }
 
   response.json(pages);
 }
