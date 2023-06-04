@@ -84,8 +84,10 @@ export default function PageContent({ page }: PageContentProps) {
   }, [sendRealtimeMessage, isControlledScrolling]);
 
   return (
-    <ReactMarkdown className="prose mx-auto break-words p-8" rehypePlugins={[rehypeRaw]}>
-      {page.content}
-    </ReactMarkdown>
+    <main contentEditable spellCheck={false}>
+      <ReactMarkdown className="prose mx-auto break-words p-8" rehypePlugins={[rehypeRaw]}>
+        {page.content}
+      </ReactMarkdown>
+    </main>
   );
 }
