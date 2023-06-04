@@ -70,6 +70,9 @@ dependencies:
   typescript:
     specifier: 5.0.4
     version: 5.0.4
+  use-indexeddb:
+    specifier: ^2.0.2
+    version: 2.0.2(react@18.2.0)
 
 devDependencies:
   '@tailwindcss/typography':
@@ -7376,6 +7379,18 @@ packages:
     dependencies:
       punycode: 2.3.0
     dev: true
+
+  /use-indexeddb@2.0.2(react@18.2.0):
+    resolution:
+      {
+        integrity: sha512-pF1Gnrdg7wYvSKAXQvITP0KDVFnecjfckxLAtne6WYDJfbGaeOG7038sZjpR9SrcS9xrjKLJSjeakkYzHyhhEw==,
+      }
+    engines: { node: '>=14' }
+    peerDependencies:
+      react: '>=17'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /use-sync-external-store@1.2.0(react@18.2.0):
     resolution:
