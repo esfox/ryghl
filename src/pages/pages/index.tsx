@@ -5,17 +5,11 @@ import { PageType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
-import { useEffectOnce } from 'react-use';
 
 export default function Pages() {
-  const {
-    refetch: fetchPages,
-    data: pages,
-    isLoading: isLoadingPages,
-  } = useQuery({
+  const { data: pages, isLoading: isLoadingPages } = useQuery({
     queryKey: ['pages'],
     queryFn: () => apiService.getPages(),
-    enabled: false,
     initialData: [],
   });
 
@@ -28,10 +22,6 @@ export default function Pages() {
     enabled: false,
     initialData: [],
     retry: false,
-  });
-
-  useEffectOnce(() => {
-    fetchPages();
   });
 
   useEffect(() => {
@@ -58,9 +48,11 @@ export default function Pages() {
           <button className="btn btn-primary btn-sm px-6">New Page</button>
         </Link>
       </div>
-      {isLoadingPages ? (
-        <div className="h-full w-full grid place-items-center">Loading...</div>
-      ) : (
+      {isLoadingPages && <div className="h-full w-full grid place-items-center">Loading...</div>}
+      {!isLoadingPages && pageGridData.length === 0 && (
+        <h3 className="text-lg text-gray-400 text-center py-12">No pages saved</h3>
+      )}
+      {!isLoadingPages && pageGridData.length !== 0 && (
         <div className="grid grid-cols-4 gap-x-4 gap-y-12 p-4">
           {pageGridData &&
             pageGridData.map((page, index) => (
