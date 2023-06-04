@@ -21,17 +21,9 @@ export default function Pages() {
 
   const { refetch: fetchPagePreviews, data: pagePreviews } = useQuery({
     queryKey: ['page_previews', pages],
-    queryFn: async () => {
-      const previewPromises = pages.map(({ title }) => apiService.getPagePreview(title));
-      const result = await Promise.allSettled(previewPromises);
-      const previews = [];
-      for (const item of result) {
-        if (item.status === 'fulfilled') {
-          previews.push(item.value);
-        }
-      }
-
-      return previews;
+    queryFn: () => {
+      const pageTitles = pages.map(({ title }) => title);
+      return apiService.getPagePreviews(pageTitles);
     },
     enabled: false,
     initialData: [],

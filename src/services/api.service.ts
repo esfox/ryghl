@@ -32,8 +32,17 @@ export const apiService = {
     return this.api.get('pages').json<PageType[]>();
   },
 
-  getPagePreview(pageTitle: string) {
-    return this.api.get(`pages/${pageTitle}/preview`).json<Omit<PageType, 'id'>>();
+  getPagePreviews(pageTitles: string[]) {
+    const searchParams = new URLSearchParams();
+    for (const title of pageTitles) {
+      searchParams.append('titles', title);
+    }
+
+    return this.api
+      .get('pages/previews', {
+        searchParams,
+      })
+      .json<Omit<PageType, 'id'>[]>();
   },
 
   async getPageContent(pageId: string, options?: { withPreview?: boolean }) {
