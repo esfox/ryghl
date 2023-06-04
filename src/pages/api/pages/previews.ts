@@ -5,7 +5,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
   const { query } = request;
-  const pageTitles = query.titles as string[];
+  let pageTitles = query.titles as string[];
+  if (!Array.isArray(pageTitles)) {
+    pageTitles = [pageTitles];
+  }
 
   const result = await pagesService.getPreviews({ pageTitles });
   const previews = [];
