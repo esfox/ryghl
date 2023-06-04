@@ -1,5 +1,6 @@
-import { usePages } from '@/hooks/usePages';
+import { apiService } from '@/services/api.service';
 
+import { useMutation } from '@tanstack/react-query';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -13,7 +14,11 @@ const defaultTitle = `untitled_page_${new Date().toISOString().replace(/T/, '_')
 export default function Pages() {
   const [content, setContent] = useState('');
   const [title, setTitle] = useState(defaultTitle);
-  const { savePage, isSavingPage } = usePages();
+
+  const { mutateAsync: savePage, isLoading: isSavingPage } = useMutation({
+    mutationFn: (params: { title: string; content: string }) =>
+      apiService.savePage(params.title, params.content),
+  });
 
   const onTitleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     setTitle(target.value);
