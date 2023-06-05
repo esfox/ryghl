@@ -1,5 +1,5 @@
 import { useRealtime } from '@/hooks/useRealtime';
-import { apiService } from '@/services/api.service';
+import { pagesService } from '@/services/pages.service';
 import { PageContentDataType } from '@/types';
 import { convertScrollPercent, debounce } from '@/utils';
 
@@ -17,7 +17,6 @@ export async function getServerSideProps(
   context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<PageContentProps> | undefined> {
   const pageId = context.query.id as string;
-  const cookies = context.req.cookies as Record<string, string>;
 
   const redirect = () => ({
     redirect: {
@@ -26,23 +25,32 @@ export async function getServerSideProps(
     },
   });
 
-  let pageContentResponse;
+  let pageContentData: PageContentDataType | undefined;
   try {
-    pageContentResponse = await apiService.withCookies(cookies).getPageContent(pageId);
+    const file = await pagesService.get(pageId);
+    const content = await file.text();
+    pageContentData = {
+      pageId,
+      content,
+    };
   } catch (error) {
-    const httpError = error as HTTPError;
-    if (httpError.response.status === 404) {
-      return redirect();
+    if (error instanceof HTTPError) {
+      if (error.response.status === 404) {
+        return redirect();
+      }
     }
+
+    // eslint-disable-next-line no-console
+    console.error(error);
   }
 
-  if (!pageContentResponse) {
+  if (!pageContentData) {
     return redirect();
   }
 
   return {
     props: {
-      page: pageContentResponse ?? {},
+      page: pageContentData ?? {},
     },
   };
 }
