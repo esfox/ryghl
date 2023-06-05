@@ -1,11 +1,11 @@
-import { API_URL, SESSION_EXPIRES_IN } from '@/constants';
+import { SESSION_EXPIRES_IN } from '@/constants';
 import { PageContentDataType, PageType } from '@/types';
 
 import Cookies from 'js-cookie';
 import ky from 'ky';
 
 export const apiService = {
-  api: ky.create({ prefixUrl: `${API_URL}/api` }),
+  api: ky.create({ prefixUrl: '/api' }),
 
   withCookies(cookies: Record<string, string>) {
     this.api = this.api.extend({

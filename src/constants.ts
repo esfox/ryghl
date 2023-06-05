@@ -1,6 +1,4 @@
 /* eslint-disable prefer-destructuring */
-export const API_URL = process.env.API_URL ?? '';
-
 export const GLOBAL_PASSWORD = process.env.GLOBAL_PASSWORD as string;
 export const SESSION_EXPIRES_IN = Number(process.env.SESSION_EXPIRES_IN ?? 60 * 60 * 24 * 7);
 
