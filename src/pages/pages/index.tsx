@@ -7,10 +7,11 @@ import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
 
 export default function Pages() {
-  const { data: pages, isLoading: isLoadingPages } = useQuery({
+  const { data: pages, isFetching: isLoadingPages } = useQuery({
     queryKey: ['pages'],
     queryFn: () => apiService.getPages(),
     initialData: [],
+    refetchOnWindowFocus: false,
   });
 
   const { refetch: fetchPagePreviews, data: pagePreviews } = useQuery({
