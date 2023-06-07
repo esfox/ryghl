@@ -37,7 +37,7 @@ export const apiService = {
 
   savePage(title: string, content: string) {
     return this.api
-      .post('pages/new', {
+      .post('pages/save', {
         body: content,
         headers: {
           title,

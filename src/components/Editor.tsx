@@ -5,9 +5,10 @@ import { useEffectOnce } from 'react-use';
 
 type EditorProps = {
   onChange?: (content: string) => void;
+  initialContent?: string;
 };
 
-export default function Editor({ onChange }: EditorProps) {
+export default function Editor({ onChange, initialContent }: EditorProps) {
   const editorRef = useRef<TuiEditor>(null);
 
   const handleChange = () => {
@@ -25,7 +26,7 @@ export default function Editor({ onChange }: EditorProps) {
       return;
     }
 
-    editor.setMarkdown('');
+    editor.setMarkdown(initialContent ?? '');
   });
 
   return (
