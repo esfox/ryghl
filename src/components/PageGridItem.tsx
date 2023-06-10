@@ -47,7 +47,7 @@ export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
           </svg>
         </Link>
       </Link>
-      <Link href={`/pages/${page.id}`} className="mt-5">
+      <Link href={`/pages/${page.id}`} className="w-40 text-center truncate mt-5" title={page.id}>
         {title}
       </Link>
     </div>

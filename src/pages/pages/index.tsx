@@ -49,12 +49,16 @@ export default function Pages() {
           <button className="btn btn-primary btn-sm px-6">New Page</button>
         </Link>
       </div>
-      {isLoadingPages && <div className="h-full w-full grid place-items-center">Loading...</div>}
+      {isLoadingPages && (
+        <div className="h-full w-full grid place-items-center">
+          <span className="loading loading-dots loading-lg"></span>
+        </div>
+      )}
       {!isLoadingPages && pageGridData.length === 0 && (
         <h3 className="text-lg text-gray-400 text-center py-12">No pages saved</h3>
       )}
       {!isLoadingPages && pageGridData.length !== 0 && (
-        <div className="grid grid-cols-4 gap-x-4 gap-y-12 p-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-x-4 gap-y-12 p-4">
           {pageGridData &&
             pageGridData.map((page, index) => (
               <PageGridItem key={`${index}_${Date.now()}`} page={page} />
