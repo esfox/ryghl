@@ -1,3 +1,4 @@
+import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 import { useRealtime } from '@/hooks/useRealtime';
 import { pagesService } from '@/services/pages.service';
 import { PageContentDataType } from '@/types';
@@ -6,8 +7,6 @@ import { convertScrollPercent, debounce } from '@/utils';
 import { HTTPError } from 'ky';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useEffect, useState } from 'react';
-import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
-import rehypeRaw from 'rehype-raw';
 
 interface PageContentProps {
   page: PageContentDataType;
@@ -93,9 +92,7 @@ export default function PageContent({ page }: PageContentProps) {
 
   return (
     <main contentEditable spellCheck={false}>
-      <ReactMarkdown className="prose mx-auto break-words p-8" rehypePlugins={[rehypeRaw]}>
-        {page.content}
-      </ReactMarkdown>
+      <MarkdownRenderer>{page.content}</MarkdownRenderer>
     </main>
   );
 }

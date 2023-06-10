@@ -26,7 +26,7 @@ export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
         tabIndex={0}
       >
         {preview ? (
-          <Image src={preview} alt="preview" width={160} height={240} className="p-4" />
+          <Image src={preview} alt="preview" width={160} height={240} className="p-3" />
         ) : (
           <div className="p-6">
             <SkeletonTheme baseColor="#eaeaea" highlightColor="#eaeaea">

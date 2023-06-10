@@ -1,7 +1,6 @@
 import { SUPABASE_BUCKET_NAME, SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY } from '@/constants';
 
 import { createClient } from '@supabase/supabase-js';
-import { convert2img } from 'mdimg';
 
 type PaginationType = {
   page?: number;
@@ -64,9 +63,11 @@ export const pagesService = {
   },
 
   // TODO: Create page ID
-  async create(title: string, content: string) {
+  async create(params: { title: string; content: string; previewImage?: string }) {
+    const { title, content, previewImage } = params;
+
     /* Save the actual page file */
-    const filepath = this.getPagePath(title);
+    const filepath = this.getPagePath(title.trim());
     const uploadResult = await getBucket().upload(filepath, content, {
       contentType: 'text/markdown;charset=UTF-8',
       upsert: true,
@@ -76,25 +77,19 @@ export const pagesService = {
       throw uploadResult.error;
     }
 
-    /* Generate and save the page preview thumbnail */
-    const { data: previewImage } = await convert2img({
-      mdText: content || '‍',
-      width: 300,
-      height: 500,
-      encoding: 'base64',
-      cssTemplate: 'empty',
-    });
+    if (previewImage) {
+      const previewBase64Data = previewImage.substring(previewImage.indexOf(','));
+      const previewBuffer = Buffer.from(previewBase64Data, 'base64');
+      const previewPath = this.getPagePreviewPath(title);
+      const previewUploadResult = await getBucket().upload(previewPath, previewBuffer, {
+        contentType: 'image/png',
+        upsert: true,
+      });
 
-    const previewImageBuffer = Buffer.from(previewImage as string, 'base64');
-    const previewPath = this.getPagePreviewPath(title);
-    const previewUploadResult = await getBucket().upload(previewPath, previewImageBuffer, {
-      contentType: 'image/png',
-      upsert: true,
-    });
-
-    if (previewUploadResult.error) {
-      // eslint-disable-next-line no-console
-      console.error(`Failed to create a preview for page '${title}'`);
+      if (previewUploadResult.error) {
+        // eslint-disable-next-line no-console
+        console.error(`Failed to create a preview for page '${title}'`);
+      }
     }
 
     return uploadResult.data;

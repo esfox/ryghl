@@ -1,15 +1,19 @@
 import { apiService } from '@/services/api.service';
 
+import { MarkdownRenderer } from './MarkdownRenderer';
+
 import { useMutation } from '@tanstack/react-query';
 import classNames from 'classnames';
+import { toPng } from 'html-to-image';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useRef, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 
 const ClientSideEditor = dynamic(() => import('./Editor'), { ssr: false });
 
 const defaultTitle = `untitled_page_${new Date().toISOString().replace(/T/, '_').substring(0, 16)}`;
+const previewImageMaxHeight = 1500;
 
 type PageEditorProps = {
   initialTitle?: string;
@@ -20,9 +24,12 @@ export const PageEditor: React.FC<PageEditorProps> = ({ initialTitle, initialCon
   const [content, setContent] = useState(initialContent ?? '');
   const [title, setTitle] = useState(initialTitle ?? defaultTitle);
 
-  const { mutateAsync: savePage, isLoading: isSavingPage } = useMutation({
-    mutationFn: (params: { title: string; content: string }) =>
-      apiService.savePage(params.title.trim(), params.content),
+  const markdownPreview = useRef<HTMLDivElement>(null);
+
+  const [isSavingPage, setIsSavingPage] = useState(false);
+  const { mutateAsync: savePage } = useMutation({
+    mutationFn: (params: { title: string; content: string; previewImage?: string }) =>
+      apiService.savePage(params),
   });
 
   const onTitleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
@@ -34,10 +41,34 @@ export const PageEditor: React.FC<PageEditorProps> = ({ initialTitle, initialCon
   };
 
   const onSave = async () => {
-    await savePage({ title, content });
+    setIsSavingPage(true);
+
+    /* This is such a hack to create a preview image...
+      The hidden markdown preview element is temporarily shown
+      then an image is generated from its child elements, then
+      it is again hidden after generating the image. */
+    document.body.style.overflow = 'hidden';
+    const markdownPreviewElement = markdownPreview.current;
+    if (!markdownPreviewElement) {
+      return;
+    }
+
+    markdownPreviewElement.style.display = 'block';
+    const previewImage = await toPng(markdownPreviewElement.firstChild as HTMLElement, {
+      style: { margin: '0' },
+      height: previewImageMaxHeight,
+    });
+
+    markdownPreviewElement.style.display = 'none';
+    document.body.style.overflow = 'initial';
+
+    /* Save the actual page */
+    await savePage({ title, content, previewImage });
     toast.success('Page saved successfully!', {
       duration: 4000,
     });
+
+    setIsSavingPage(false);
   };
 
   return (
@@ -60,17 +91,26 @@ export const PageEditor: React.FC<PageEditorProps> = ({ initialTitle, initialCon
           Back to pages
         </Link>
         <button
-          className={classNames('btn btn-primary btn-sm w-[10rem]', {
-            loading: isSavingPage,
-          })}
+          className="btn btn-primary btn-sm w-[10rem]"
           disabled={isSavingPage}
           onClick={onSave}
         >
-          Save
+          {isSavingPage ? (
+            <>
+              Saving
+              <span className="loading loading-dots loading-xs"></span>
+            </>
+          ) : (
+            'Save'
+          )}
         </button>
       </div>
       <ClientSideEditor onChange={onEditorChange} initialContent={initialContent} />
       <Toaster />
+      {/* This element is a hidden element used only for generating the preview of the page */}
+      <div ref={markdownPreview} style={{ display: 'none' }}>
+        <MarkdownRenderer>{content}</MarkdownRenderer>
+      </div>
     </>
   );
 };
