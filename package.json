@@ -16,7 +16,7 @@
     "autoprefixer": "10.4.14",
     "classnames": "^2.3.2",
     "cloudflare-client": "^0.3.2",
-    "daisyui": "^2.51.6",
+    "daisyui": "^3.0.22",
     "http-constants-ts": "^1.0.7",
     "jose": "^4.14.4",
     "js-cookie": "^3.0.5",

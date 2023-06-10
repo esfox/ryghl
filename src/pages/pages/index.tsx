@@ -43,7 +43,7 @@ export default function Pages() {
 
   return (
     <>
-      <div className="navbar bg-base-100 flex justify-between px-4">
+      <div className="navbar flex justify-between px-4">
         <span className="font-bold normal-case text-xl px-2">Pages</span>
         <Link href="/pages/new">
           <button className="btn btn-primary btn-sm px-6">New Page</button>

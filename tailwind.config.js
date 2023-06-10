@@ -19,8 +19,9 @@ module.exports = {
   daisyui: {
     themes: [
       {
-        light: {
-          ...require('daisyui/src/colors/themes')['[data-theme=garden]'],
+        lemonade: {
+          ...require('daisyui/src/theming/themes')['[data-theme=lemonade]'],
+          'base-100': '#eeeeee',
           '--btn-text-case': 'none',
         },
       },
