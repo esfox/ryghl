@@ -10,7 +10,8 @@
     "daisyui",
     "toastui",
     "supabase",
-    "rehype"
+    "rehype",
+    "kysely"
   ],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }

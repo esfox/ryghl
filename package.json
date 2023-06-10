@@ -38,6 +38,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@types/js-cookie": "^3.0.3",
     "@types/node": "^20.1.0",
+    "@types/pg": "^8.10.2",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@types/uuid": "^9.0.1",
@@ -53,7 +54,9 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
     "husky": "^8.0.3",
+    "kysely": "^0.25.0",
     "lint-staged": "^13.2.2",
+    "pg": "^8.11.0",
     "prettier": "^2.8.8"
   }
 }
