@@ -35,7 +35,7 @@ export default function Pages() {
     const pagesData = [];
     for (const pageItem of pages) {
       const pagePreview = pagePreviews.find(({ title }) => pageItem.id === title);
-      const pageData: PageType = { ...pageItem, preview: pagePreview?.preview };
+      const pageData: PageType = { ...pageItem, previewImage: pagePreview?.previewImage };
       pagesData.push(pageData);
     }
     return pagesData;

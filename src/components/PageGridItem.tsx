@@ -10,7 +10,7 @@ type PageGridItemProps = {
 };
 
 export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
-  const { title, preview } = page;
+  const { title, previewImage } = page;
 
   return (
     <div className="grid place-items-center">
@@ -25,8 +25,8 @@ export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
         "
         tabIndex={0}
       >
-        {preview ? (
-          <Image src={preview} alt="preview" width={160} height={240} className="p-3" />
+        {previewImage ? (
+          <Image src={previewImage} alt="preview" width={160} height={240} className="p-3" />
         ) : (
           <div className="p-6">
             <SkeletonTheme baseColor="#eaeaea" highlightColor="#eaeaea">

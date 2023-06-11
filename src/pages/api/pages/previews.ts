@@ -21,7 +21,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
 
     const previewData: Omit<PageType, 'id'> = {
       title: pageTitles[i],
-      preview: signedUrl,
+      previewImage: signedUrl,
     };
 
     previews.push(previewData);
