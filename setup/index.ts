@@ -1,17 +1,17 @@
 /* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-var-requires */
-require('dotenv').config();
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import { Migrator, Kysely, PostgresDialect, FileMigrationProvider } from 'kysely';
+import { Pool } from 'pg';
 
-const { createClient } = require('@supabase/supabase-js');
-const { Migrator, Kysely, PostgresDialect, FileMigrationProvider } = require('kysely');
-const { Pool } = require('pg');
+import { promises as fs } from 'fs';
+import path from 'path';
 
-const { promises: fs } = require('fs');
-const path = require('path');
+dotenv.config();
 
-const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL;
-const apiKey = process.env.SUPABASE_SERVICE_API_KEY;
-const bucketName = process.env.SUPABASE_BUCKET_NAME;
+const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL as string;
+const apiKey = process.env.SUPABASE_SERVICE_API_KEY as string;
+const bucketName = process.env.SUPABASE_BUCKET_NAME as string;
 const databaseConnectionString = process.env.SUPABASE_DATABASE_CONNECTION_STRING;
 const databaseSslCertificate = process.env.SUPABASE_DATABASE_SSL_CERTIFICATE;
 
