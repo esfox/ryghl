@@ -70,11 +70,11 @@ export const pagesService = {
     return data;
   },
 
-  async create(params: { title: string; content: string; previewImage?: string }) {
-    const { title, content, previewImage } = params;
+  async save(params: { id?: string; title: string; content: string; previewImage?: string }) {
+    const { id, title, content, previewImage } = params;
 
     /* Save the actual page file */
-    const pageId = nanoid(16);
+    const pageId = id ?? nanoid(16);
     const filepath = this.getPagePath(pageId);
     const uploadResult = await bucket().upload(filepath, content, {
       contentType: 'text/markdown;charset=UTF-8',
@@ -106,10 +106,15 @@ export const pagesService = {
     }
 
     /* Create the page record in the pages database table */
-    const savePageRecordResult = await pagesTable().insert<PageRecordType>({
-      id: pageId,
-      title,
-    });
+    const savePageRecordResult = await pagesTable().upsert<PageRecordType>(
+      {
+        [PageRecordColumn.id]: pageId,
+        [PageRecordColumn.title]: title,
+      },
+      {
+        onConflict: PageRecordColumn.id,
+      }
+    );
 
     if (savePageRecordResult.error) {
       throw savePageRecordResult.error;

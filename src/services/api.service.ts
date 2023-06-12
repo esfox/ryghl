@@ -35,11 +35,12 @@ export const apiService = {
       .json<Omit<PageType, 'title'>[]>();
   },
 
-  savePage(params: { title: string; content: string; previewImage?: string }) {
-    const { title, content, previewImage } = params;
+  savePage(params: { id?: string; title: string; content: string; previewImage?: string }) {
+    const { id, title, content, previewImage } = params;
     return this.api
       .post('pages/save', {
         json: {
+          id,
           title,
           content,
           previewImage,

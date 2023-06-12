@@ -54,5 +54,5 @@ export async function getServerSideProps(
   };
 }
 export default function EditPage({ data, content }: EditPageProps) {
-  return <PageEditor initialTitle={data.title} initialContent={content} />;
+  return <PageEditor pageId={data.id} initialTitle={data.title} initialContent={content} />;
 }

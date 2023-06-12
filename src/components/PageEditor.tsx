@@ -16,11 +16,12 @@ const defaultTitle = `untitled_page_${new Date().toISOString().replace(/T/, '_')
 const previewImageMaxHeight = 1500;
 
 type PageEditorProps = {
+  pageId?: string;
   initialTitle?: string;
   initialContent?: string;
 };
 
-export const PageEditor: React.FC<PageEditorProps> = ({ initialTitle, initialContent }) => {
+export const PageEditor: React.FC<PageEditorProps> = ({ pageId, initialTitle, initialContent }) => {
   const [content, setContent] = useState(initialContent ?? '');
   const [title, setTitle] = useState(initialTitle ?? defaultTitle);
 
@@ -28,7 +29,7 @@ export const PageEditor: React.FC<PageEditorProps> = ({ initialTitle, initialCon
 
   const [isSavingPage, setIsSavingPage] = useState(false);
   const { mutateAsync: savePage } = useMutation({
-    mutationFn: (params: { title: string; content: string; previewImage?: string }) =>
+    mutationFn: (params: { id?: string; title: string; content: string; previewImage?: string }) =>
       apiService.savePage(params),
   });
 
@@ -63,7 +64,7 @@ export const PageEditor: React.FC<PageEditorProps> = ({ initialTitle, initialCon
     document.body.style.overflow = 'initial';
 
     /* Save the actual page */
-    await savePage({ title, content, previewImage });
+    await savePage({ id: pageId, title, content, previewImage });
     toast.success('Page saved successfully!', {
       duration: 4000,
     });
