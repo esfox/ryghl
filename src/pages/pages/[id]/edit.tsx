@@ -1,12 +1,13 @@
 import { PageEditor } from '@/components/PageEditor';
 import { pagesService } from '@/services/pages.service';
-import { PageContentDataType } from '@/types';
+import { PageType } from '@/types';
+import { mapPageRecords } from '@/utils/mapper.util';
 
-import { HTTPError } from 'ky';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
 interface EditPageProps {
-  page: PageContentDataType;
+  data: PageType;
+  content: string;
 }
 
 export async function getServerSideProps(
@@ -21,35 +22,37 @@ export async function getServerSideProps(
     },
   });
 
-  let pageContentData: PageContentDataType | undefined;
+  let data: PageType;
   try {
-    const file = await pagesService.get(pageId);
-    const content = await file.text();
-    pageContentData = {
-      pageId,
-      content,
-    };
+    const [pageRecord] = await pagesService.get(pageId);
+    [data] = mapPageRecords([pageRecord]);
   } catch (error) {
-    if (error instanceof HTTPError) {
-      if (error.response.status === 404) {
-        return redirect();
-      }
-    }
-
     // eslint-disable-next-line no-console
     console.error(error);
+    return redirect();
   }
 
-  if (!pageContentData) {
+  let content: string;
+  try {
+    const file = await pagesService.getContent(data.id);
+    content = await file.text();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    return redirect();
+  }
+
+  if (!content) {
     return redirect();
   }
 
   return {
     props: {
-      page: pageContentData ?? {},
+      data,
+      content,
     },
   };
 }
-export default function EditPage({ page }: EditPageProps) {
-  return <PageEditor initialTitle={page.pageId} initialContent={page.content} />;
+export default function EditPage({ data, content }: EditPageProps) {
+  return <PageEditor initialTitle={data.title} initialContent={content} />;
 }

@@ -11,7 +11,8 @@
     "toastui",
     "supabase",
     "rehype",
-    "kysely"
+    "kysely",
+    "ilike"
   ],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }

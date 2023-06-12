@@ -5,12 +5,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
   const { query } = request;
-  let pageTitles = query.titles as string[];
-  if (!Array.isArray(pageTitles)) {
-    pageTitles = [pageTitles];
+  let pageIds = query.ids as string[];
+  if (!Array.isArray(pageIds)) {
+    pageIds = [pageIds];
   }
 
-  const result = await pagesService.getPreviews({ pageTitles });
+  const result = await pagesService.getPreviews({ pageIds });
   const previews = [];
   for (let i = 0; i < result.length; i += 1) {
     const { signedUrl, error } = result[i];
@@ -19,8 +19,8 @@ export default async function handler(request: NextApiRequest, response: NextApi
       continue;
     }
 
-    const previewData: Omit<PageType, 'id'> = {
-      title: pageTitles[i],
+    const previewData: Omit<PageType, 'title'> = {
+      id: pageIds[i],
       previewImage: signedUrl,
     };
 

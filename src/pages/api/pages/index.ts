@@ -1,5 +1,6 @@
 import { pagesService } from '@/services/pages.service';
 import { PageType, PagesQueryType } from '@/types';
+import { mapPageRecords } from '@/utils/mapper.util';
 
 import { ResponseCodes } from 'http-constants-ts';
 
@@ -32,21 +33,7 @@ export default async function handler(
 
   const { search } = query;
 
-  const files = await pagesService.list({ page: pageNumber, countPerPage, search });
-  const pages = [];
-  for (const { name } of files) {
-    if (name === '.emptyFolderPlaceholder') {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-
-    const page: PageType = {
-      id: name,
-      title: name,
-    };
-
-    pages.push(page);
-  }
-
+  const pageRecords = await pagesService.list({ page: pageNumber, countPerPage, search });
+  const pages = mapPageRecords(pageRecords);
   response.json(pages);
 }

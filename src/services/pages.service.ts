@@ -1,4 +1,9 @@
+/* eslint-disable @typescript-eslint/no-throw-literal */
+/* eslint-disable no-console */
 import { SUPABASE_BUCKET_NAME, SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY } from '@/constants';
+import { PageRecordColumn } from '@/constants/database';
+import { PageRecordType } from '@/types/database';
+import { nanoid } from '@/utils/nanoid.util';
 
 import { createClient } from '@supabase/supabase-js';
 
@@ -14,21 +19,23 @@ enum Folders {
 
 const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY);
 
-function getBucket() {
+function bucket() {
   return supabase.storage.from(SUPABASE_BUCKET_NAME);
 }
 
+function pagesTable() {
+  return supabase.from('pages');
+}
+
 export const pagesService = {
-  // TODO: Get by page ID
-  getPagePath(title: string) {
-    return `${Folders.Pages}/${title}`;
+  getPagePath(id: string) {
+    return `${Folders.Pages}/${id}`;
   },
 
-  getPagePreviewPath(pageTitle: string) {
-    return `${Folders.PagePreviews}/${pageTitle}`;
+  getPagePreviewPath(pageId: string) {
+    return `${Folders.PagePreviews}/${pageId}`;
   },
 
-  // TODO: Include page IDs
   async list(params: PaginationType & { search?: string }) {
     const { page, countPerPage, search } = params;
     let pageNumber = page ?? 1;
@@ -36,14 +43,15 @@ export const pagesService = {
       pageNumber = 1;
     }
 
-    const limit = countPerPage ?? 100;
+    let query = pagesTable()
+      .select<'*', PageRecordType>()
+      .limit(countPerPage ?? 100);
 
-    const { data, error } = await getBucket().list(Folders.Pages, {
-      limit: limit ?? 100,
-      offset: (pageNumber - 1) * limit,
-      search,
-    });
+    if (search) {
+      query = query.ilike(PageRecordColumn.title, search);
+    }
 
+    const { data, error } = await query;
     if (error) {
       throw error;
     }
@@ -51,10 +59,10 @@ export const pagesService = {
     return data;
   },
 
-  async getPreviews(params: { pageTitles: string[] } & PaginationType) {
-    const { pageTitles } = params;
-    const previewPaths = pageTitles.map((title) => this.getPagePreviewPath(title));
-    const { data, error } = await getBucket().createSignedUrls(previewPaths, 3600);
+  async getPreviews(params: { pageIds: string[] } & PaginationType) {
+    const { pageIds } = params;
+    const previewPaths = pageIds.map((id) => this.getPagePreviewPath(id));
+    const { data, error } = await bucket().createSignedUrls(previewPaths, 3600);
     if (error) {
       throw error;
     }
@@ -62,13 +70,13 @@ export const pagesService = {
     return data;
   },
 
-  // TODO: Create page ID
   async create(params: { title: string; content: string; previewImage?: string }) {
     const { title, content, previewImage } = params;
 
     /* Save the actual page file */
-    const filepath = this.getPagePath(title.trim());
-    const uploadResult = await getBucket().upload(filepath, content, {
+    const pageId = nanoid(16);
+    const filepath = this.getPagePath(pageId);
+    const uploadResult = await bucket().upload(filepath, content, {
       contentType: 'text/markdown;charset=UTF-8',
       upsert: true,
     });
@@ -77,27 +85,53 @@ export const pagesService = {
       throw uploadResult.error;
     }
 
+    const contentUploadUrl = uploadResult.data?.path;
+    if (!contentUploadUrl) {
+      return;
+    }
+
     if (previewImage) {
       const previewBase64Data = previewImage.substring(previewImage.indexOf(','));
       const previewBuffer = Buffer.from(previewBase64Data, 'base64');
-      const previewPath = this.getPagePreviewPath(title);
-      const previewUploadResult = await getBucket().upload(previewPath, previewBuffer, {
+      const previewPath = this.getPagePreviewPath(pageId);
+      const previewUploadResult = await bucket().upload(previewPath, previewBuffer, {
         contentType: 'image/png',
         upsert: true,
       });
 
       if (previewUploadResult.error) {
-        // eslint-disable-next-line no-console
         console.error(`Failed to create a preview for page '${title}'`);
+        console.error(previewUploadResult.error);
       }
     }
 
-    return uploadResult.data;
+    /* Create the page record in the pages database table */
+    const savePageRecordResult = await pagesTable().insert<PageRecordType>({
+      id: pageId,
+      title,
+    });
+
+    if (savePageRecordResult.error) {
+      throw savePageRecordResult.error;
+    }
+
+    return savePageRecordResult.data;
   },
 
-  async get(title: string) {
-    const filepath = this.getPagePath(title);
-    const { data, error } = await getBucket().download(filepath);
+  async get(id: string) {
+    const { data, error } = await pagesTable()
+      .select<'*', PageRecordType>()
+      .eq(PageRecordColumn.id, id);
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async getContent(id: string) {
+    const filepath = this.getPagePath(id);
+    const { data, error } = await bucket().download(filepath);
     if (error) {
       throw error;
     }

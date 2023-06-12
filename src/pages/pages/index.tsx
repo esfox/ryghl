@@ -17,8 +17,8 @@ export default function Pages() {
   const { refetch: fetchPagePreviews, data: pagePreviews } = useQuery({
     queryKey: ['page_previews', pages],
     queryFn: () => {
-      const pageTitles = pages.map(({ title }) => title);
-      return apiService.getPagePreviews(pageTitles);
+      const pageIds = pages.map(({ id }) => id);
+      return apiService.getPagePreviews(pageIds);
     },
     enabled: false,
     initialData: [],
@@ -34,7 +34,7 @@ export default function Pages() {
   const pageGridData = useMemo<PageType[]>(() => {
     const pagesData = [];
     for (const pageItem of pages) {
-      const pagePreview = pagePreviews.find(({ title }) => pageItem.id === title);
+      const pagePreview = pagePreviews.find(({ id }) => pageItem.id === id);
       const pageData: PageType = { ...pageItem, previewImage: pagePreview?.previewImage };
       pagesData.push(pageData);
     }

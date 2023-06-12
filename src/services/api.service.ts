@@ -22,17 +22,17 @@ export const apiService = {
     return this.api.get('pages').json<PageType[]>();
   },
 
-  getPagePreviews(pageTitles: string[]) {
+  getPagePreviews(pageIds: string[]) {
     const searchParams = new URLSearchParams();
-    for (const title of pageTitles) {
-      searchParams.append('titles', title);
+    for (const id of pageIds) {
+      searchParams.append('ids', id);
     }
 
     return this.api
       .get('pages/previews', {
         searchParams,
       })
-      .json<Omit<PageType, 'id'>[]>();
+      .json<Omit<PageType, 'title'>[]>();
   },
 
   savePage(params: { title: string; content: string; previewImage?: string }) {

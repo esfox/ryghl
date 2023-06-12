@@ -10,12 +10,12 @@ type PageGridItemProps = {
 };
 
 export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
-  const { title, previewImage } = page;
+  const { id, title, previewImage } = page;
 
   return (
     <div className="grid place-items-center">
       <Link
-        href={`/pages/${page.id}`}
+        href={`/pages/${id}`}
         className="
           w-[10rem] h-[15rem]
           relative group mt-5
@@ -35,7 +35,7 @@ export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
           </div>
         )}
         <Link
-          href={`/pages/${page.id}/edit`}
+          href={`/pages/${id}/edit`}
           className="
             btn btn-secondary btn-square btn-sm
             absolute hidden top-0 right-0 m-2
@@ -47,7 +47,7 @@ export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
           </svg>
         </Link>
       </Link>
-      <Link href={`/pages/${page.id}`} className="w-40 text-center truncate mt-5" title={page.id}>
+      <Link href={`/pages/${id}`} className="w-40 text-center truncate mt-5" title={title}>
         {title}
       </Link>
     </div>

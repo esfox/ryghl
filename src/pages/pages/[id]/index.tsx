@@ -1,15 +1,13 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 import { useRealtime } from '@/hooks/useRealtime';
 import { pagesService } from '@/services/pages.service';
-import { PageContentDataType } from '@/types';
 import { convertScrollPercent, debounce } from '@/utils';
 
-import { HTTPError } from 'ky';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useEffect, useState } from 'react';
 
 interface PageContentProps {
-  page: PageContentDataType;
+  content: string;
 }
 
 export async function getServerSideProps(
@@ -24,37 +22,28 @@ export async function getServerSideProps(
     },
   });
 
-  let pageContentData: PageContentDataType | undefined;
+  let content: string;
   try {
-    const file = await pagesService.get(pageId);
-    const content = await file.text();
-    pageContentData = {
-      pageId,
-      content,
-    };
+    const file = await pagesService.getContent(pageId);
+    content = await file.text();
   } catch (error) {
-    if (error instanceof HTTPError) {
-      if (error.response.status === 404) {
-        return redirect();
-      }
-    }
-
     // eslint-disable-next-line no-console
     console.error(error);
+    return redirect();
   }
 
-  if (!pageContentData) {
+  if (!content) {
     return redirect();
   }
 
   return {
     props: {
-      page: pageContentData ?? {},
+      content,
     },
   };
 }
 
-export default function PageContent({ page }: PageContentProps) {
+export default function PageContent({ content: pageContent }: PageContentProps) {
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
 
   const { sendMessage: sendRealtimeMessage } = useRealtime({
@@ -92,7 +81,7 @@ export default function PageContent({ page }: PageContentProps) {
 
   return (
     <main contentEditable spellCheck={false}>
-      <MarkdownRenderer>{page.content}</MarkdownRenderer>
+      <MarkdownRenderer>{pageContent}</MarkdownRenderer>
     </main>
   );
 }
