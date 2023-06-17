@@ -12,7 +12,9 @@
     "supabase",
     "rehype",
     "kysely",
-    "ilike"
+    "ilike",
+    "fortawesome",
+    "fontawesome"
   ],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }

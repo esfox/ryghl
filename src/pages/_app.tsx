@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';

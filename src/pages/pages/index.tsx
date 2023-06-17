@@ -55,7 +55,7 @@ export default function Pages() {
         </div>
       )}
       {!isLoadingPages && pageGridData.length === 0 && (
-        <h3 className="text-lg text-gray-400 text-center py-12">No pages saved</h3>
+        <h3 className="text-lg text-neutral-400 text-center py-12">No pages saved</h3>
       )}
       {!isLoadingPages && pageGridData.length !== 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-x-4 gap-y-12 p-4">
