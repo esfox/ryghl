@@ -29,7 +29,7 @@ export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
           <Image src={previewImage} alt="preview" width={160} height={240} className="p-3" />
         ) : (
           <div className="p-6">
-            <SkeletonTheme baseColor="#eaeaea" highlightColor="#eaeaea">
+            <SkeletonTheme baseColor="#eaeaea" highlightColor="#dadada">
               <Skeleton count={7} containerClassName="w-full" />
             </SkeletonTheme>
           </div>
