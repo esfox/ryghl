@@ -1,8 +1,7 @@
 import { pagesService } from '@/services/pages.service';
 
 import { ResponseCodes } from 'http-constants-ts';
-
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
 type SavePageBody = {
   id?: string;
@@ -11,12 +10,19 @@ type SavePageBody = {
   previewImage?: string;
 };
 
-export default async function handler(request: NextApiRequest, response: NextApiResponse) {
+export const config = {
+  runtime: 'edge',
+};
+
+export default async function handler(request: NextRequest) {
   if (request.method !== 'POST') {
-    return response.status(ResponseCodes.METHOD_NOT_ALLOWED).send('Method not allowed');
+    return new Response('Method not allowed', {
+      status: ResponseCodes.METHOD_NOT_ALLOWED,
+    });
   }
 
   // TODO: Validate title and content
-  const result = await pagesService.save(request.body as SavePageBody);
-  response.send(result);
+  const pageContent = await request.json();
+  const result = await pagesService.save(pageContent as SavePageBody);
+  return NextResponse.json(result);
 }
