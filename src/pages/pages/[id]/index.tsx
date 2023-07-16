@@ -49,6 +49,7 @@ export async function getServerSideProps(
 
 function useControlMenu() {
   const [isControlMenuOpen, setIsControlMenuOpen] = useState(false);
+  const [isFullWidth, setIsFullWidth] = useState(false);
   const controlMenuRef = useRef<HTMLDetailsElement>(null);
 
   /* A ref is used for the synced scrolling state since it is used in functions
@@ -75,6 +76,11 @@ function useControlMenu() {
     );
   };
 
+  const onFullWidth = () => {
+    closeControlMenu();
+    setIsFullWidth(!isFullWidth);
+  };
+
   useEffectOnce(() => {
     if (!controlMenuRef.current) {
       return;
@@ -89,8 +95,10 @@ function useControlMenu() {
     controlMenuRef,
     isControlMenuOpen,
     isSyncedScrollingDisabledRef,
+    isFullWidth,
     closeControlMenu,
     onDisableSyncedScrolling,
+    onFullWidth,
   };
 }
 
@@ -102,8 +110,10 @@ export default function PageContent({ content: pageContent }: PageContentProps) 
     isControlMenuOpen,
     controlMenuRef,
     isSyncedScrollingDisabledRef,
+    isFullWidth,
     closeControlMenu,
     onDisableSyncedScrolling,
+    onFullWidth,
   } = useControlMenu();
 
   const { sendMessage: sendRealtimeMessage } = useRealtime({
@@ -154,7 +164,7 @@ export default function PageContent({ content: pageContent }: PageContentProps) 
         spellCheck={false}
         onClick={closeControlMenu}
       >
-        <MarkdownRenderer>{pageContent}</MarkdownRenderer>
+        <MarkdownRenderer fullWidth={isFullWidth}>{pageContent}</MarkdownRenderer>
       </div>
       <div className={classNames('fixed bottom-0 right-0', !isMobile && 'group')}>
         <details
@@ -185,8 +195,14 @@ export default function PageContent({ content: pageContent }: PageContentProps) 
           >
             <li role="button" onClick={onDisableSyncedScrolling}>
               <a>
-                <i className="fa-solid fa-computer-mouse mr-1" />
+                <i className="fa-solid fa-computer-mouse mr-1 py-2" />
                 {isSyncedScrollingDisabledRef.current ? 'Enable' : 'Disable'} synced scrolling
+              </a>
+            </li>
+            <li role="button" onClick={onFullWidth}>
+              <a>
+                <i className="fa-solid fa-arrows-left-right mr-1 py-2" />
+                {isFullWidth ? 'Disable' : 'Enable'} Full Width
               </a>
             </li>
           </ul>
