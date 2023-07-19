@@ -1,14 +1,12 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
-import { useIsMobile } from '@/hooks/useIsMobile';
+import { PageViewControlMenu } from '@/components/PageViewControlMenu';
 import { useRealtime } from '@/hooks/useRealtime';
 import { pagesService } from '@/services/pages.service';
 import { convertScrollPercent, debounce } from '@/utils';
 
-import classNames from 'classnames';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useEffectOnce } from 'react-use';
 
 interface PageContentProps {
   content: string;
@@ -47,79 +45,16 @@ export async function getServerSideProps(
   };
 }
 
-function useControlMenu() {
-  const [isControlMenuOpen, setIsControlMenuOpen] = useState(false);
-  const [isFullWidth, setIsFullWidth] = useState(false);
-  const controlMenuRef = useRef<HTMLDetailsElement>(null);
-
-  /* A ref is used for the synced scrolling state since it is used in functions
-    that might not get this value's actual current state. */
-  const isSyncedScrollingDisabledRef = useRef(false);
-
-  const closeControlMenu = () => {
-    if (!controlMenuRef.current) {
-      return;
-    }
-
-    controlMenuRef.current.open = false;
-  };
-
-  const onDisableSyncedScrolling = () => {
-    closeControlMenu();
-
-    isSyncedScrollingDisabledRef.current = !isSyncedScrollingDisabledRef.current;
-    toast.success(
-      `Synced scrolling ${isSyncedScrollingDisabledRef.current ? 'disabled' : 'enabled'}`,
-      {
-        position: 'bottom-center',
-      },
-    );
-  };
-
-  const onFullWidth = () => {
-    closeControlMenu();
-    setIsFullWidth(!isFullWidth);
-  };
-
-  useEffectOnce(() => {
-    if (!controlMenuRef.current) {
-      return;
-    }
-
-    controlMenuRef.current.addEventListener('toggle', () =>
-      setIsControlMenuOpen(controlMenuRef.current?.open ?? false),
-    );
-  });
-
-  return {
-    controlMenuRef,
-    isControlMenuOpen,
-    isSyncedScrollingDisabledRef,
-    isFullWidth,
-    closeControlMenu,
-    onDisableSyncedScrolling,
-    onFullWidth,
-  };
-}
-
 export default function PageContent({ content: pageContent }: PageContentProps) {
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
-
-  const { isMobile } = useIsMobile();
-  const {
-    isControlMenuOpen,
-    controlMenuRef,
-    isSyncedScrollingDisabledRef,
-    isFullWidth,
-    closeControlMenu,
-    onDisableSyncedScrolling,
-    onFullWidth,
-  } = useControlMenu();
+  const [isSyncedScrolling, setIsSyncedScrolling] = useState(false);
+  const [isFullWidth, setIsFullWidth] = useState(false);
+  const [isControlMenuOpened, setIsControlMenuOpened] = useState(false);
 
   const { sendMessage: sendRealtimeMessage } = useRealtime({
     channelName: 'scroll',
     onMessage: (data) => {
-      if (isSyncedScrollingDisabledRef.current) {
+      if (isSyncedScrolling) {
         return;
       }
 
@@ -130,9 +65,28 @@ export default function PageContent({ content: pageContent }: PageContentProps) 
     },
   });
 
+  const closeMenus = () => {
+    setIsControlMenuOpened(false);
+  };
+
+  const onToggleControlMenu = (isOpen: boolean) => {
+    setIsControlMenuOpened(isOpen);
+  };
+
+  const onToggleSyncedScrolling = () => {
+    setIsSyncedScrolling(!isSyncedScrolling);
+    toast.success(`Synced scrolling ${!isSyncedScrolling ? 'disabled' : 'enabled'}`, {
+      position: 'bottom-center',
+    });
+  };
+
+  const onToggleFullWidth = () => {
+    setIsFullWidth(!isFullWidth);
+  };
+
   useEffect(() => {
     const dispatchRealtimeScroll = debounce((scrollPercent: number) => {
-      if (isSyncedScrollingDisabledRef.current) {
+      if (isSyncedScrolling) {
         return;
       }
 
@@ -154,60 +108,21 @@ export default function PageContent({ content: pageContent }: PageContentProps) 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [sendRealtimeMessage, isControlledScrolling, isSyncedScrollingDisabledRef]);
+  }, [sendRealtimeMessage, isControlledScrolling, isSyncedScrolling]);
 
   return (
     <>
-      <div
-        contentEditable
-        suppressContentEditableWarning
-        spellCheck={false}
-        onClick={closeControlMenu}
-      >
+      <div contentEditable suppressContentEditableWarning spellCheck={false} onClick={closeMenus}>
         <MarkdownRenderer fullWidth={isFullWidth}>{pageContent}</MarkdownRenderer>
       </div>
-      <div className={classNames('fixed bottom-0 right-0', !isMobile && 'group')}>
-        <details
-          ref={controlMenuRef}
-          className={classNames(
-            'dropdown dropdown-top dropdown-end',
-            !isMobile && 'translate-y-[88px] transition-transform group-hover:translate-y-0',
-            isControlMenuOpen && 'translate-y-0',
-          )}
-          open={false}
-        >
-          <summary
-            className={classNames(
-              'btn btn-circle bg-base-100 border border-neutral-300 shadow-lg',
-              isMobile ? 'btn-sm m-3' : 'm-5',
-            )}
-          >
-            <i
-              className={classNames(
-                'fa-solid fa-ellipsis-vertical color text-neutral-400',
-                !isMobile && 'fa-lg',
-              )}
-            />
-          </summary>
-          <ul
-            tabIndex={0}
-            className="shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-64"
-          >
-            <li role="button" onClick={onDisableSyncedScrolling}>
-              <a>
-                <i className="fa-solid fa-computer-mouse mr-1 py-2" />
-                {isSyncedScrollingDisabledRef.current ? 'Enable' : 'Disable'} synced scrolling
-              </a>
-            </li>
-            <li role="button" onClick={onFullWidth}>
-              <a>
-                <i className="fa-solid fa-arrows-left-right mr-1 py-2" />
-                {isFullWidth ? 'Disable' : 'Enable'} Full Width
-              </a>
-            </li>
-          </ul>
-        </details>
-      </div>
+      <PageViewControlMenu
+        isOpen={isControlMenuOpened}
+        isFullWidth={isFullWidth}
+        isSyncedScrolling={isSyncedScrolling}
+        onOpen={onToggleControlMenu}
+        onToggleSyncedScrolling={onToggleSyncedScrolling}
+        onToggleFullWidth={onToggleFullWidth}
+      />
     </>
   );
 }
