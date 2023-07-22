@@ -13,7 +13,14 @@
     "kysely",
     "ilike",
     "fortawesome",
-    "fontawesome"
+    "fontawesome",
+    "retriggering",
+    "inview"
   ],
-  "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
+  "ignorePaths": [
+    "node_modules/",
+    ".husky",
+    "pnpm-lock.yaml",
+    "package.json"
+  ]
 }

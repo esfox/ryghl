@@ -6,11 +6,8 @@ import { useEffectOnce } from 'react-use';
 
 export type UseRealtimeParams = {
   channelName: string;
-  onMessage: (message: ScrollRealtimeEventType) => void;
-};
-
-type ScrollRealtimeEventType = {
-  scrollPercent: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onMessage: (message: any) => void;
 };
 
 const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY);
@@ -29,7 +26,7 @@ export function useRealtime({ channelName, onMessage }: UseRealtimeParams) {
         },
       })
       .on('broadcast', { event: channelName }, (data) => {
-        const eventData = data.payload as ScrollRealtimeEventType;
+        const eventData = data.payload;
         onMessage(eventData);
       })
       .subscribe((status) => {
@@ -45,7 +42,7 @@ export function useRealtime({ channelName, onMessage }: UseRealtimeParams) {
     };
   });
 
-  const sendMessage = (data: ScrollRealtimeEventType) =>
+  const sendMessage = (data: unknown) =>
     realtimeChannelRef.current?.send({
       type: 'broadcast',
       event: channelName,

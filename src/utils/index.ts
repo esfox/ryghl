@@ -11,15 +11,31 @@ export function debounce(fn: (...args: any[]) => unknown, ms = 300) {
   return debounced;
 }
 
-export function convertScrollPercent(params?: { fromPercent: number }) {
-  const { fromPercent } = params ?? {};
+export function collectLeafNodes({
+  parentNode,
+  excludedNodeNames,
+}: {
+  parentNode: HTMLElement;
+  excludedNodeNames?: string[];
+}) {
+  const leaves = new Set<HTMLElement>();
 
-  const scrollTopOffset = document.body.scrollHeight - window.innerHeight;
-  if (fromPercent !== undefined) {
-    const toScrollY = scrollTopOffset * (fromPercent / 100);
-    return Math.round(toScrollY);
+  function collect(parent: HTMLElement) {
+    const { children } = parent;
+    if (children.length === 0) {
+      leaves.add(parent);
+    }
+
+    for (let i = 0; i < children.length; i += 1) {
+      const child = children[i] as HTMLElement;
+      if (excludedNodeNames?.includes(child.nodeName)) {
+        leaves.add(parent);
+      } else {
+        collect(child);
+      }
+    }
   }
 
-  const scrollPercent = window.scrollY / scrollTopOffset;
-  return Math.round(scrollPercent * 100);
+  collect(parentNode);
+  return Array.from(leaves);
 }

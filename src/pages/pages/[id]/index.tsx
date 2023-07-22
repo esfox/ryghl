@@ -2,11 +2,13 @@ import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 import { PageViewControlMenu } from '@/components/PageViewControlMenu';
 import { useRealtime } from '@/hooks/useRealtime';
 import { pagesService } from '@/services/pages.service';
-import { convertScrollPercent, debounce } from '@/utils';
+import { SyncedScrollingPayload } from '@/types';
+import { debounce, collectLeafNodes } from '@/utils';
 
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useEffectOnce } from 'react-use';
 
 interface PageContentProps {
   pageId: string;
@@ -49,25 +51,33 @@ export async function getServerSideProps(
 
 export default function PageContent({ pageId, content: pageContent }: PageContentProps) {
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
-  // const [isSyncedScrolling, setIsSyncedScrolling] = useState(false);
   const [isFullWidth, setIsFullWidth] = useState(false);
   const [isControlMenuOpened, setIsControlMenuOpened] = useState(false);
 
-  /* A ref is used for the synced scrolling state since it is used in functions
-    that might not get this value's actual current state. */
+  /* A ref is used for the synced scrolling state since it is used in
+    an effect that might not get the actual value of this. */
   const isSyncedScrolling = useRef<boolean>(true);
+
+  /* A ref is also used for the first visible element ID since it is
+    also used in an effect that might not get the actual value of this. */
+  const firstVisibleChildId = useRef<string>();
+
+  const pageContentWrapper = useRef<HTMLDivElement>(null);
 
   const { sendMessage: sendRealtimeMessage } = useRealtime({
     channelName: `scroll-${pageId}`,
-    onMessage: (data) => {
-      if (!isSyncedScrolling.current) {
+    onMessage: (data: SyncedScrollingPayload) => {
+      if (!isSyncedScrolling.current || !pageContentWrapper.current) {
         return;
       }
 
       setIsControlledScrolling(true);
-      const { scrollPercent } = data;
-      const toScrollY = convertScrollPercent({ fromPercent: scrollPercent });
-      window.scrollTo({ top: toScrollY, behavior: 'smooth' });
+      const childToScrollTo = document.getElementById(data.firstVisibleChildId);
+      if (!childToScrollTo) {
+        return;
+      }
+      const offset = 10;
+      window.scrollTo({ top: childToScrollTo.offsetTop - offset, behavior: 'smooth' });
     },
   });
 
@@ -91,19 +101,22 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
   };
 
   useEffect(() => {
-    const dispatchRealtimeScroll = debounce((scrollPercent: number) => {
-      if (!isSyncedScrolling.current) {
+    const dispatchRealtimeScroll = debounce(() => {
+      if (!isSyncedScrolling.current || !firstVisibleChildId.current) {
         return;
       }
 
-      sendRealtimeMessage({ scrollPercent });
+      const syncedScrollingPayload: SyncedScrollingPayload = {
+        firstVisibleChildId: firstVisibleChildId.current,
+      };
+
+      sendRealtimeMessage(syncedScrollingPayload);
     }, 200);
 
     let scrollingTimeout: ReturnType<typeof setTimeout>;
     const handleScroll = () => {
       if (!isControlledScrolling) {
-        const scrollPercent = convertScrollPercent();
-        return dispatchRealtimeScroll(scrollPercent);
+        return dispatchRealtimeScroll();
       }
 
       clearTimeout(scrollingTimeout);
@@ -114,11 +127,69 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [sendRealtimeMessage, isControlledScrolling, isSyncedScrolling]);
+  }, [sendRealtimeMessage, isControlledScrolling]);
+
+  /* On first render, all leaf nodes in the page content are collected and:
+    - each is assigned an ID
+    - an Intersection Observer observes each
+    When one of the leaf nodes enters in view, the Intersection Observer callback
+    assigns a data attribute to the leaf node indicating that it is in view.
+    Then the ID of the first of those nodes in view is taken and sent to the realtime
+    channel. That ID will then be the indicator of the element where to scroll to
+    for the scroll syncing. */
+  useEffectOnce(() => {
+    const contentWrapper = pageContentWrapper.current;
+    if (!contentWrapper) {
+      return;
+    }
+
+    const pageContentElement = contentWrapper.firstChild as HTMLElement;
+    const leafNodes = collectLeafNodes({
+      parentNode: pageContentElement,
+      excludedNodeNames: ['U', 'STRONG', 'EM'],
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const inViewDataName = 'inview';
+        for (const entry of entries) {
+          const element = entry.target as HTMLElement;
+          if (entry.isIntersecting) {
+            element.dataset[inViewDataName] = 'true';
+          } else {
+            delete element.dataset[inViewDataName];
+          }
+        }
+
+        const firstEntryInView = pageContentElement.querySelector(`[data-${inViewDataName}]`);
+        firstVisibleChildId.current = firstEntryInView?.id;
+      },
+      { threshold: 1 },
+    );
+
+    for (let i = 0; i < leafNodes.length; i += 1) {
+      /* Assign an ID to each leaf node */
+      const child = leafNodes[i];
+      child.id = `child-${i + 1}`;
+
+      /* Observe each leaf node for intersection */
+      observer.observe(child);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  });
 
   return (
     <>
-      <div contentEditable suppressContentEditableWarning spellCheck={false} onClick={closeMenus}>
+      <div
+        ref={pageContentWrapper}
+        contentEditable
+        suppressContentEditableWarning
+        spellCheck={false}
+        onClick={closeMenus}
+      >
         <MarkdownRenderer fullWidth={isFullWidth}>{pageContent}</MarkdownRenderer>
       </div>
       <PageViewControlMenu

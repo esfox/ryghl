@@ -9,3 +9,7 @@ export type PagesQueryType = {
   countPerPage?: number;
   search?: string;
 };
+
+export type SyncedScrollingPayload = {
+  firstVisibleChildId: string;
+};
