@@ -49,14 +49,18 @@ export async function getServerSideProps(
 
 export default function PageContent({ pageId, content: pageContent }: PageContentProps) {
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
-  const [isSyncedScrolling, setIsSyncedScrolling] = useState(false);
+  // const [isSyncedScrolling, setIsSyncedScrolling] = useState(false);
   const [isFullWidth, setIsFullWidth] = useState(false);
   const [isControlMenuOpened, setIsControlMenuOpened] = useState(false);
+
+  /* A ref is used for the synced scrolling state since it is used in functions
+    that might not get this value's actual current state. */
+  const isSyncedScrolling = useRef<boolean>(true);
 
   const { sendMessage: sendRealtimeMessage } = useRealtime({
     channelName: `scroll-${pageId}`,
     onMessage: (data) => {
-      if (isSyncedScrolling) {
+      if (!isSyncedScrolling.current) {
         return;
       }
 
@@ -76,7 +80,7 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
   };
 
   const onToggleSyncedScrolling = () => {
-    setIsSyncedScrolling(!isSyncedScrolling);
+    isSyncedScrolling.current = !isSyncedScrolling.current;
     toast.success(`Synced scrolling ${!isSyncedScrolling ? 'disabled' : 'enabled'}`, {
       position: 'bottom-center',
     });
@@ -88,7 +92,7 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
 
   useEffect(() => {
     const dispatchRealtimeScroll = debounce((scrollPercent: number) => {
-      if (isSyncedScrolling) {
+      if (!isSyncedScrolling.current) {
         return;
       }
 
@@ -120,7 +124,7 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
       <PageViewControlMenu
         isOpen={isControlMenuOpened}
         isFullWidth={isFullWidth}
-        isSyncedScrolling={isSyncedScrolling}
+        isSyncedScrolling={isSyncedScrolling.current}
         onOpen={onToggleControlMenu}
         onToggleSyncedScrolling={onToggleSyncedScrolling}
         onToggleFullWidth={onToggleFullWidth}
