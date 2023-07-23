@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 interface PageContentProps {
+  pageId: string;
   content: string;
 }
 
@@ -40,19 +41,20 @@ export async function getServerSideProps(
 
   return {
     props: {
+      pageId,
       content,
     },
   };
 }
 
-export default function PageContent({ content: pageContent }: PageContentProps) {
+export default function PageContent({ pageId, content: pageContent }: PageContentProps) {
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
   const [isSyncedScrolling, setIsSyncedScrolling] = useState(false);
   const [isFullWidth, setIsFullWidth] = useState(false);
   const [isControlMenuOpened, setIsControlMenuOpened] = useState(false);
 
   const { sendMessage: sendRealtimeMessage } = useRealtime({
-    channelName: 'scroll',
+    channelName: `scroll-${pageId}`,
     onMessage: (data) => {
       if (isSyncedScrolling) {
         return;
