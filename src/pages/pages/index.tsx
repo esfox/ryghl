@@ -3,6 +3,7 @@ import { apiService } from '@/services/api.service';
 import { PageType } from '@/types';
 
 import { useQuery } from '@tanstack/react-query';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
 
@@ -43,6 +44,9 @@ export default function Pages() {
 
   return (
     <>
+      <Head>
+        <title>Pages</title>
+      </Head>
       <div className="navbar flex justify-between px-4">
         <span className="font-bold normal-case text-xl px-2">Pages</span>
         <Link href="/pages/new">

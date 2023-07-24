@@ -6,6 +6,7 @@ import { SyncedScrollingPayload } from '@/types';
 import { debounce, collectLeafNodes } from '@/utils';
 
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useEffectOnce } from 'react-use';
@@ -54,12 +55,16 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
   const [isFullWidth, setIsFullWidth] = useState(false);
   const [isControlMenuOpened, setIsControlMenuOpened] = useState(false);
 
+  /* A ref is used for the first line of the page
+    content since it is only set one time anyway. */
+  const contentFirstLine = useRef<string>();
+
   /* A ref is used for the synced scrolling state since it is used in
     an effect that might not get the actual value of this. */
   const isSyncedScrolling = useRef<boolean>(true);
 
-  /* A ref is also used for the first visible element ID since it is
-    also used in an effect that might not get the actual value of this. */
+  /* A ref is used for the first visible element ID since it is also
+    used in an effect that might not get the actual value of this. */
   const firstVisibleChildId = useRef<string>();
 
   const pageContentWrapper = useRef<HTMLDivElement>(null);
@@ -136,7 +141,8 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
     assigns a data attribute to the leaf node indicating that it is in view.
     Then the ID of the first of those nodes in view is taken and sent to the realtime
     channel. That ID will then be the indicator of the element where to scroll to
-    for the scroll syncing. */
+    for the scroll syncing.
+    Also, the first line of the page content is taken and set as the tab title. */
   useEffectOnce(() => {
     const contentWrapper = pageContentWrapper.current;
     if (!contentWrapper) {
@@ -176,6 +182,9 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
       observer.observe(child);
     }
 
+    /* Get the first line of the content. */
+    contentFirstLine.current = contentWrapper.textContent?.split('\n', 1)[0];
+
     return () => {
       observer.disconnect();
     };
@@ -183,6 +192,9 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
 
   return (
     <>
+      <Head>
+        <title>{contentFirstLine.current}</title>
+      </Head>
       <div
         ref={pageContentWrapper}
         contentEditable
