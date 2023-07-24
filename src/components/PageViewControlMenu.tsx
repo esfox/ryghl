@@ -7,18 +7,22 @@ type PageViewControlMenuProps = {
   isOpen: boolean;
   isFullWidth: boolean;
   isSyncedScrolling: boolean;
+  isIncomingScrollSyncDisabled: boolean;
   onOpen: (isOpen: boolean) => void;
-  onToggleSyncedScrolling: () => void;
   onToggleFullWidth: () => void;
+  onToggleSyncedScrolling: () => void;
+  onToggleIncomingScrollSync: () => void;
 };
 
 export const PageViewControlMenu: React.FC<PageViewControlMenuProps> = ({
   isOpen,
   isFullWidth,
   isSyncedScrolling,
+  isIncomingScrollSyncDisabled,
   onOpen,
-  onToggleSyncedScrolling,
   onToggleFullWidth,
+  onToggleSyncedScrolling,
+  onToggleIncomingScrollSync,
 }) => {
   const controlMenuRef = useRef<HTMLDetailsElement>(null);
 
@@ -30,14 +34,21 @@ export const PageViewControlMenu: React.FC<PageViewControlMenuProps> = ({
     onOpen(toOpen ?? controlMenuRef.current.open ?? false);
   };
 
-  const onDisableSyncedScrolling = () => {
-    toggleControlMenu(false);
+  const closeMenu = () => toggleControlMenu(false);
+
+  const toggleSyncedScrolling = () => {
+    closeMenu();
     onToggleSyncedScrolling();
   };
 
-  const onFullWidth = () => {
-    toggleControlMenu(false);
+  const toggleFullWidth = () => {
+    closeMenu();
     onToggleFullWidth();
+  };
+
+  const toggleIncomingScrollSync = () => {
+    closeMenu();
+    onToggleIncomingScrollSync();
   };
 
   useEffectOnce(() => {
@@ -76,18 +87,30 @@ export const PageViewControlMenu: React.FC<PageViewControlMenuProps> = ({
           tabIndex={0}
           className="shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-64"
         >
-          <li role="button" onClick={onDisableSyncedScrolling}>
-            <a>
-              <i className="fa-solid fa-computer-mouse mr-1 py-2" />
-              {isSyncedScrolling ? 'Disable' : 'Enable'} synced scrolling
-            </a>
-          </li>
-          <li role="button" onClick={onFullWidth}>
-            <a>
-              <i className="fa-solid fa-arrows-left-right mr-1 py-2" />
-              {isFullWidth ? 'Disable' : 'Enable'} Full Width
-            </a>
-          </li>
+          {[
+            {
+              label: `${isFullWidth ? 'Disable' : 'Enable'} Full Width`,
+              icon: 'arrows-left-right',
+              onClick: toggleFullWidth,
+            },
+            {
+              label: `${isSyncedScrolling ? 'Disable' : 'Enable'} synced scrolling`,
+              icon: 'computer-mouse',
+              onClick: toggleSyncedScrolling,
+            },
+            {
+              label: `${isIncomingScrollSyncDisabled ? 'Enable' : 'Disable'} incoming scroll sync`,
+              icon: 'square-arrow-up-right fa-flip-vertical',
+              onClick: toggleIncomingScrollSync,
+            },
+          ].map(({ label, icon, onClick }, i) => (
+            <li key={`control-menu-option-${i}`} role="button" onClick={onClick}>
+              <a>
+                <i className={`fa-solid fa-${icon} w-4 mr-1 py-2`} />
+                {label}
+              </a>
+            </li>
+          ))}
         </ul>
       </details>
     </div>

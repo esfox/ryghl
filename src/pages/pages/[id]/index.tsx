@@ -69,7 +69,8 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
 
   /* A ref is used for the synced scrolling state since it is used in
     an effect that might not get the actual value of this. */
-  const isSyncedScrolling = useRef<boolean>(true);
+  const isSyncedScrolling = useRef(true);
+  const isIncomingScrollSyncDisabled = useRef(false);
 
   /* A ref is used for the first visible element ID since it is also
     used in an effect that might not get the actual value of this. */
@@ -80,7 +81,11 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
   const { sendMessage: sendRealtimeMessage } = useRealtime({
     channelName: `scroll-${pageId}`,
     onMessage: (data: SyncedScrollingPayload) => {
-      if (!isSyncedScrolling.current || !pageContentWrapper.current) {
+      if (
+        !isSyncedScrolling.current ||
+        isIncomingScrollSyncDisabled.current ||
+        !pageContentWrapper.current
+      ) {
         return;
       }
 
@@ -102,6 +107,10 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
     setIsControlMenuOpened(isOpen);
   };
 
+  const onToggleFullWidth = () => {
+    setIsFullWidth(!isFullWidth);
+  };
+
   const onToggleSyncedScrolling = () => {
     isSyncedScrolling.current = !isSyncedScrolling.current;
     toast.success(`Synced scrolling ${!isSyncedScrolling.current ? 'disabled' : 'enabled'}`, {
@@ -109,8 +118,14 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
     });
   };
 
-  const onToggleFullWidth = () => {
-    setIsFullWidth(!isFullWidth);
+  const onToggleIncomingScrollSync = () => {
+    isIncomingScrollSyncDisabled.current = !isIncomingScrollSyncDisabled.current;
+    toast.success(
+      `Incoming scroll sync ${isIncomingScrollSyncDisabled.current ? 'disabled' : 'enabled'}`,
+      {
+        position: 'bottom-center',
+      },
+    );
   };
 
   const onZoomIn = () => setFontSize(fontSize + fontSizeStep);
@@ -225,9 +240,11 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
             isOpen={isControlMenuOpened}
             isFullWidth={isFullWidth}
             isSyncedScrolling={isSyncedScrolling.current}
+            isIncomingScrollSyncDisabled={isIncomingScrollSyncDisabled.current}
             onOpen={onToggleControlMenu}
             onToggleSyncedScrolling={onToggleSyncedScrolling}
             onToggleFullWidth={onToggleFullWidth}
+            onToggleIncomingScrollSync={onToggleIncomingScrollSync}
           />
         </>
       )}
