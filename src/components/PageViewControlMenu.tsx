@@ -55,7 +55,7 @@ export const PageViewControlMenu: React.FC<PageViewControlMenuProps> = ({
         className={classNames(
           'dropdown dropdown-top dropdown-end',
           !isMobile && 'transition-transform group-hover:translate-y-0',
-          isOpen ? 'translate-y-0' : 'translate-y-[88px]',
+          !isMobile && !isOpen && 'translate-y-[88px]',
         )}
         open={isOpen}
       >
