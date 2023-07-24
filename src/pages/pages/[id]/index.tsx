@@ -10,7 +10,7 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import Head from 'next/head';
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useEffectOnce } from 'react-use';
+import { useEffectOnce, useMountedState } from 'react-use';
 
 interface PageContentProps {
   pageId: string;
@@ -55,6 +55,9 @@ const fontSizeDefault = 16;
 const fontSizeStep = 1;
 
 export default function PageContent({ pageId, content: pageContent }: PageContentProps) {
+  /* Mounted state is used for avoiding SSR of the control menu and zoom controls. */
+  const isMounted = useMountedState();
+
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
   const [isFullWidth, setIsFullWidth] = useState(true);
   const [isControlMenuOpened, setIsControlMenuOpened] = useState(false);
@@ -215,15 +218,19 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
       >
         <MarkdownRenderer fullWidth={isFullWidth}>{pageContent}</MarkdownRenderer>
       </div>
-      <ZoomControls onZoomIn={onZoomIn} onZoomOut={onZoomOut} onZoomReset={onZoomReset} />
-      <PageViewControlMenu
-        isOpen={isControlMenuOpened}
-        isFullWidth={isFullWidth}
-        isSyncedScrolling={isSyncedScrolling.current}
-        onOpen={onToggleControlMenu}
-        onToggleSyncedScrolling={onToggleSyncedScrolling}
-        onToggleFullWidth={onToggleFullWidth}
-      />
+      {isMounted() && (
+        <>
+          <ZoomControls onZoomIn={onZoomIn} onZoomOut={onZoomOut} onZoomReset={onZoomReset} />
+          <PageViewControlMenu
+            isOpen={isControlMenuOpened}
+            isFullWidth={isFullWidth}
+            isSyncedScrolling={isSyncedScrolling.current}
+            onOpen={onToggleControlMenu}
+            onToggleSyncedScrolling={onToggleSyncedScrolling}
+            onToggleFullWidth={onToggleFullWidth}
+          />
+        </>
+      )}
     </>
   );
 }
