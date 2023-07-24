@@ -10,3 +10,8 @@ body {
 #__next {
   height: 100%;
 }
+
+.markdown-renderer {
+  font-size: calc(var(--markdown-renderer-font-size) * 1px);
+  line-height: calc(var(--markdown-renderer-font-size) * 1.5px);
+}

@@ -1,5 +1,6 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 import { PageViewControlMenu } from '@/components/PageViewControlMenu';
+import { ZoomControls } from '@/components/ZoomControls';
 import { useRealtime } from '@/hooks/useRealtime';
 import { pagesService } from '@/services/pages.service';
 import { SyncedScrollingPayload } from '@/types';
@@ -7,7 +8,7 @@ import { debounce, collectLeafNodes } from '@/utils';
 
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import Head from 'next/head';
-import { useEffect, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useEffectOnce } from 'react-use';
 
@@ -50,10 +51,14 @@ export async function getServerSideProps(
   };
 }
 
+const fontSizeDefault = 16;
+const fontSizeStep = 1;
+
 export default function PageContent({ pageId, content: pageContent }: PageContentProps) {
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
   const [isFullWidth, setIsFullWidth] = useState(false);
   const [isControlMenuOpened, setIsControlMenuOpened] = useState(false);
+  const [fontSize, setFontSize] = useState(fontSizeDefault);
 
   /* A ref is used for the first line of the page
     content since it is only set one time anyway. */
@@ -104,6 +109,10 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
   const onToggleFullWidth = () => {
     setIsFullWidth(!isFullWidth);
   };
+
+  const onZoomIn = () => setFontSize(fontSize + fontSizeStep);
+  const onZoomOut = () => setFontSize(fontSize - fontSizeStep);
+  const onZoomReset = () => setFontSize(fontSizeDefault);
 
   useEffect(() => {
     const dispatchRealtimeScroll = debounce(() => {
@@ -196,14 +205,17 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
         <title>{contentFirstLine.current}</title>
       </Head>
       <div
+        id="markdown-page-content"
         ref={pageContentWrapper}
         contentEditable
         suppressContentEditableWarning
         spellCheck={false}
         onClick={closeMenus}
+        style={{ '--markdown-renderer-font-size': fontSize } as CSSProperties}
       >
         <MarkdownRenderer fullWidth={isFullWidth}>{pageContent}</MarkdownRenderer>
       </div>
+      <ZoomControls onZoomIn={onZoomIn} onZoomOut={onZoomOut} onZoomReset={onZoomReset} />
       <PageViewControlMenu
         isOpen={isControlMenuOpened}
         isFullWidth={isFullWidth}

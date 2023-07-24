@@ -10,7 +10,10 @@ type MarkdownRendererProps = {
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ children, fullWidth }) => (
   <ReactMarkdown
-    className={classNames('prose leading-6 mx-auto break-words p-8', fullWidth ? 'max-w-full' : '')}
+    className={classNames(
+      'markdown-renderer prose mx-auto break-words p-8',
+      fullWidth ? 'max-w-full' : '',
+    )}
     rehypePlugins={[rehypeRaw]}
   >
     {children}
