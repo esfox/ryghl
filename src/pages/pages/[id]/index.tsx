@@ -56,7 +56,7 @@ const fontSizeStep = 1;
 
 export default function PageContent({ pageId, content: pageContent }: PageContentProps) {
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
-  const [isFullWidth, setIsFullWidth] = useState(false);
+  const [isFullWidth, setIsFullWidth] = useState(true);
   const [isControlMenuOpened, setIsControlMenuOpened] = useState(false);
   const [fontSize, setFontSize] = useState(fontSizeDefault);
 
