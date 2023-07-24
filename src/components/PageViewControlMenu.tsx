@@ -79,7 +79,7 @@ export const PageViewControlMenu: React.FC<PageViewControlMenuProps> = ({
           <li role="button" onClick={onDisableSyncedScrolling}>
             <a>
               <i className="fa-solid fa-computer-mouse mr-1 py-2" />
-              {isSyncedScrolling ? 'Enable' : 'Disable'} synced scrolling
+              {isSyncedScrolling ? 'Disable' : 'Enable'} synced scrolling
             </a>
           </li>
           <li role="button" onClick={onFullWidth}>

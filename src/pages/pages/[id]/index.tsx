@@ -96,7 +96,7 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
 
   const onToggleSyncedScrolling = () => {
     isSyncedScrolling.current = !isSyncedScrolling.current;
-    toast.success(`Synced scrolling ${!isSyncedScrolling ? 'disabled' : 'enabled'}`, {
+    toast.success(`Synced scrolling ${!isSyncedScrolling.current ? 'disabled' : 'enabled'}`, {
       position: 'bottom-center',
     });
   };
