@@ -61,8 +61,8 @@ export const PageViewControlMenu: React.FC<PageViewControlMenuProps> = ({
       >
         <summary
           className={classNames(
-            'btn btn-circle bg-base-100 border border-neutral-300 shadow-lg',
-            isMobile ? 'btn-sm m-3' : 'm-5',
+            'btn btn-circle bg-base-100 border border-neutral-300 shadow-lg m-5',
+            isMobile && '!min-h-0 w-10 h-10',
           )}
         >
           <i
