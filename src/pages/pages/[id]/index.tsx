@@ -10,7 +10,7 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import Head from 'next/head';
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useEffectOnce, useMountedState } from 'react-use';
+import { useEffectOnce } from 'react-use';
 
 interface PageContentProps {
   pageId: string;
@@ -56,7 +56,7 @@ const fontSizeStep = 1;
 
 export default function PageContent({ pageId, content: pageContent }: PageContentProps) {
   /* Mounted state is used for avoiding SSR of the control menu and zoom controls. */
-  const isMounted = useMountedState();
+  const [isMounted, setIsMounted] = useState(false);
 
   const [isControlledScrolling, setIsControlledScrolling] = useState(false);
   const [isFullWidth, setIsFullWidth] = useState(true);
@@ -171,6 +171,8 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
     for the scroll syncing.
     Also, the first line of the page content is taken and set as the tab title. */
   useEffectOnce(() => {
+    setIsMounted(true);
+
     const contentWrapper = pageContentWrapper.current;
     if (!contentWrapper) {
       return;
@@ -233,7 +235,7 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
       >
         <MarkdownRenderer fullWidth={isFullWidth}>{pageContent}</MarkdownRenderer>
       </div>
-      {isMounted() && (
+      {isMounted && (
         <>
           <ZoomControls onZoomIn={onZoomIn} onZoomOut={onZoomOut} onZoomReset={onZoomReset} />
           <PageViewControlMenu
