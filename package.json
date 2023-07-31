@@ -19,6 +19,7 @@
     "classnames": "^2.3.2",
     "cloudflare-client": "^0.3.2",
     "daisyui": "^3.0.22",
+    "dayjs": "^1.11.9",
     "html-to-image": "^1.11.11",
     "http-constants-ts": "^1.0.7",
     "jose": "^4.14.4",

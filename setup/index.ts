@@ -55,4 +55,17 @@ const migrator = new Migrator({
     console.error('Error running database migrations');
     console.error(migrationsError);
   }
+
+  /* Create events data JSON file */
+  console.debug('Creating events data JSON file');
+  const eventsJsonFilename = 'events.json';
+  const { error: eventsDataERror } = await supabase.storage
+    .from(bucketName)
+    .upload(eventsJsonFilename, JSON.stringify([]), {
+      contentType: 'application/json;charset=UTF-8',
+    });
+  if (eventsDataERror) {
+    console.error('Error initializing events data');
+    console.error(eventsDataERror);
+  }
 })();

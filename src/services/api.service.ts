@@ -1,5 +1,5 @@
 import { SESSION_EXPIRES_IN } from '@/constants';
-import { PageType } from '@/types';
+import { PageType, SaveEventType } from '@/types';
 
 import Cookies from 'js-cookie';
 import ky from 'ky';
@@ -45,6 +45,15 @@ export const apiService = {
           content,
           previewImage,
         },
+        timeout: false,
+      })
+      .json();
+  },
+
+  saveEvent(params: SaveEventType) {
+    return this.api
+      .post('events', {
+        json: params,
         timeout: false,
       })
       .json();

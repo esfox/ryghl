@@ -15,12 +15,8 @@
     "fortawesome",
     "fontawesome",
     "retriggering",
-    "inview"
+    "inview",
+    "xmark"
   ],
-  "ignorePaths": [
-    "node_modules/",
-    ".husky",
-    "pnpm-lock.yaml",
-    "package.json"
-  ]
+  "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }

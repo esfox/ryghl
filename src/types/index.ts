@@ -13,3 +13,11 @@ export type PagesQueryType = {
 export type SyncedScrollingPayload = {
   firstVisibleChildId: string;
 };
+
+export type EventType = {
+  id: string;
+  date: string;
+  name: string;
+};
+
+export type SaveEventType = Omit<EventType, 'id'> & { id?: string };
