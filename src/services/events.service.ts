@@ -15,7 +15,9 @@ function bucket() {
 
 export const eventsService = {
   async list() {
-    const { data, error } = await bucket().download(eventsJsonFilename);
+    /* Add a timestamp to the query string to avoid cached downloading */
+    const timestampedFilename = `${eventsJsonFilename}?=${Date.now()}`;
+    const { data, error } = await bucket().download(timestampedFilename);
     if (error) {
       throw error;
     }
@@ -38,7 +40,7 @@ export const eventsService = {
       });
     } else {
       const eventToEditIndex = events.findIndex((event) => event.id === id);
-      if (!eventToEditIndex) {
+      if (eventToEditIndex < 0) {
         return events;
       }
 
@@ -50,6 +52,23 @@ export const eventsService = {
     }
 
     /* Save the events JSON file */
+    await this.upload(events);
+    return events;
+  },
+
+  async remove(eventId: string) {
+    const events = await this.list();
+    const eventToEditIndex = events.findIndex((event) => event.id === eventId);
+    if (eventToEditIndex < 0) {
+      return;
+    }
+
+    events.splice(eventToEditIndex, 1);
+    await this.upload(events);
+    return events;
+  },
+
+  async upload(events: EventType[]) {
     const eventsJson = JSON.stringify(events);
     const uploadResult = await bucket().upload(eventsJsonFilename, eventsJson, {
       contentType: 'application/json;charset=UTF-8',

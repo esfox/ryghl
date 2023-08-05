@@ -58,4 +58,12 @@ export const apiService = {
       })
       .json();
   },
+
+  deleteEvent(eventId: string) {
+    return this.api
+      .delete(`events/${eventId}`, {
+        timeout: false,
+      })
+      .json();
+  },
 };

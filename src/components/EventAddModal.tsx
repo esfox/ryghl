@@ -112,9 +112,7 @@ export const EventAddModal = forwardRef<HTMLDialogElement, EventAddModalProps>(
                 onChange={() => {}}
                 required
               >
-                <option disabled selected>
-                  Select Month
-                </option>
+                <option disabled>Select Month</option>
                 {monthOptions.map(({ value, label }) => (
                   <option key={`month-${value}`} value={value}>
                     {label}
@@ -149,7 +147,7 @@ export const EventAddModal = forwardRef<HTMLDialogElement, EventAddModalProps>(
             <button className="btn btn-primary" onClick={onClickSave} disabled={loading}>
               {loading ? (
                 <>
-                  <i className="loading loading-dots loading-xs"></i>
+                  <span className="loading loading-dots loading-xs"></span>
                   Saving
                 </>
               ) : (

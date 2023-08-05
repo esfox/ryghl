@@ -46,10 +46,11 @@ export async function getServerSideProps(): Promise<
 
 export default function Events({ data }: EventsProps) {
   const router = useRouter();
+  const refreshData = () => router.replace(router.asPath);
 
   const { mutateAsync: saveEvent } = useMutation({
     mutationFn: (payload: SaveEventType) => apiService.saveEvent(payload),
-    onSuccess: () => router.replace(router.asPath),
+    onSuccess: refreshData,
   });
 
   const eventAddModal = useRef<HTMLDialogElement>(null);
@@ -68,11 +69,21 @@ export default function Events({ data }: EventsProps) {
     });
   };
 
+  const onDeleteEvent = () => {
+    refreshData();
+    toast.success('Event deleted', {
+      duration: 4000,
+    });
+  };
+
   const background = 'hsl(var(--b1) / 1';
   return (
     <>
-      <div className="w-[40rem] grid place-items-center mx-auto">
-        <div className="sticky top-0 w-full flex flex-row-reverse pt-4 z-50" style={{ background }}>
+      <div className="w-full grid place-items-center mx-auto sm:w-[36rem]">
+        <div
+          className="sticky top-0 w-full flex flex-row-reverse pt-4 z-50 px-4 sm:px-0"
+          style={{ background }}
+        >
           <button className="btn btn-primary btn-sm" onClick={onAddEvent}>
             <i className="fa-solid fa-plus"></i>
             Add
@@ -90,8 +101,10 @@ export default function Events({ data }: EventsProps) {
             {data.map((event, i) => (
               <EventsTableRow
                 key={`event-${Date.now()}-${i}`}
+                id={event.id}
                 date={event.date}
                 name={event.name}
+                onDeleteSuccess={onDeleteEvent}
               />
             ))}
           </tbody>
