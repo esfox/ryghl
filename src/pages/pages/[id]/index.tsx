@@ -232,6 +232,9 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
         spellCheck={false}
         onClick={closeMenus}
         style={{ '--markdown-renderer-font-size': fontSize } as CSSProperties}
+        data-gramm="false"
+        data-gramm_editor="false"
+        data-enable-grammarly="false"
       >
         <MarkdownRenderer fullWidth={isFullWidth}>{pageContent}</MarkdownRenderer>
       </div>

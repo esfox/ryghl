@@ -16,7 +16,9 @@
     "fontawesome",
     "retriggering",
     "inview",
-    "xmark"
+    "xmark",
+    "gramm",
+    "grammarly"
   ],
   "ignorePaths": ["node_modules/", ".husky", "pnpm-lock.yaml", "package.json"]
 }
