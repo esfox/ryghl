@@ -17,7 +17,6 @@
     "@toast-ui/react-editor": "^3.2.3",
     "autoprefixer": "10.4.14",
     "classnames": "^2.3.2",
-    "cloudflare-client": "^0.3.2",
     "daisyui": "^3.0.22",
     "dayjs": "^1.11.9",
     "html-to-image": "^1.11.11",

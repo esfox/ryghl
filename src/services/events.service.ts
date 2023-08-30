@@ -1,11 +1,8 @@
 /* eslint-disable no-console */
-import { SUPABASE_BUCKET_NAME, SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY } from '@/constants';
+import { SUPABASE_BUCKET_NAME } from '@/constants';
+import { supabase } from '@/supabase';
 import { EventType, SaveEventType } from '@/types';
 import { nanoid } from '@/utils/nanoid.util';
-
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY);
 
 const eventsJsonFilename = 'events.json';
 

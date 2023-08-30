@@ -1,21 +1,9 @@
-import { SESSION_EXPIRES_IN } from '@/constants';
 import { PageType, SaveEventType } from '@/types';
 
-import Cookies from 'js-cookie';
 import ky from 'ky';
 
 export const apiService = {
   api: ky.create({ prefixUrl: '/api' }),
-
-  async login(password: string) {
-    const { sessionToken } = await this.api
-      .post('login', { json: { password } })
-      .json<{ sessionToken: string }>();
-
-    Cookies.set('auth', sessionToken, {
-      expires: SESSION_EXPIRES_IN / 24 / 60 / 60,
-    });
-  },
 
   // TODO: Implement pagination
   getPages() {

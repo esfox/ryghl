@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 /* eslint-disable no-console */
-import { SUPABASE_BUCKET_NAME, SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY } from '@/constants';
+import { SUPABASE_BUCKET_NAME } from '@/constants';
 import { PageRecordColumn } from '@/constants/database';
+import { supabase } from '@/supabase';
 import { PageRecordType } from '@/types/database';
 import { nanoid } from '@/utils/nanoid.util';
-
-import { createClient } from '@supabase/supabase-js';
 
 type PaginationType = {
   page?: number;
@@ -16,8 +15,6 @@ enum Folders {
   Pages = 'pages',
   PagePreviews = 'page_previews',
 }
-
-const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY);
 
 function bucket() {
   return supabase.storage.from(SUPABASE_BUCKET_NAME);
@@ -113,7 +110,7 @@ export const pagesService = {
       },
       {
         onConflict: PageRecordColumn.id,
-      }
+      },
     );
 
     if (savePageRecordResult.error) {

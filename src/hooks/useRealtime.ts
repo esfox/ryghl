@@ -1,6 +1,6 @@
-import { SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY } from '@/constants';
+import { supabasePublic } from '@/supabase-public';
 
-import { RealtimeChannel, createClient } from '@supabase/supabase-js';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { useRef, useState } from 'react';
 import { useEffectOnce } from 'react-use';
 
@@ -10,14 +10,12 @@ export type UseRealtimeParams = {
   onMessage: (message: any) => void;
 };
 
-const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY);
-
 export function useRealtime({ channelName, onMessage }: UseRealtimeParams) {
   const realtimeChannelRef = useRef<RealtimeChannel | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
 
   useEffectOnce(() => {
-    const subscription = supabase
+    const subscription = supabasePublic
       .channel(channelName, {
         config: {
           broadcast: {
@@ -38,7 +36,7 @@ export function useRealtime({ channelName, onMessage }: UseRealtimeParams) {
       });
 
     return () => {
-      supabase.removeChannel(subscription);
+      supabasePublic.removeChannel(subscription);
     };
   });
 
