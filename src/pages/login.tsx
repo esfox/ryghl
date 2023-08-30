@@ -12,8 +12,11 @@ interface LoginForm extends HTMLFormElement {
 export default function Login() {
   const { replace } = useRouter();
 
-  const { mutateAsync: login } = useMutation({
-    mutationFn: (password: string) => apiService.login(password),
+  const { mutateAsync: login, isLoading } = useMutation({
+    mutationFn: async (password: string) => {
+      await apiService.login(password);
+      await replace('/pages');
+    },
   });
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -22,7 +25,6 @@ export default function Login() {
     const password = form.password.value;
     try {
       await login(password);
-      await replace('/pages');
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
@@ -40,7 +42,7 @@ export default function Login() {
           name="password"
           className="input input-bordered block"
         />
-        <button type="submit" className="btn btn-primary mt-6">
+        <button type="submit" className="btn btn-primary mt-6" disabled={isLoading}>
           Login
         </button>
       </form>

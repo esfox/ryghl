@@ -7,10 +7,13 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 type PageGridItemProps = {
   page: PageType;
+  onClick?: () => void;
 };
 
-export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
+export const PageGridItem: React.FC<PageGridItemProps> = ({ page, onClick }) => {
   const { id, title, previewImage } = page;
+
+  const onClickHandler = onClick ?? (() => {});
 
   return (
     <div className="grid place-items-center">
@@ -24,6 +27,7 @@ export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
           transition-transform
         "
         tabIndex={0}
+        onClick={onClickHandler}
       >
         {previewImage ? (
           <Image src={previewImage} alt="preview" width={160} height={240} className="p-3" />
@@ -45,7 +49,12 @@ export const PageGridItem: React.FC<PageGridItemProps> = ({ page }) => {
           <i className="fa-solid fa-pen" />
         </Link>
       </Link>
-      <Link href={`/pages/${id}`} className="w-40 text-center truncate mt-5" title={title}>
+      <Link
+        href={`/pages/${id}`}
+        className="w-40 text-center truncate mt-5"
+        title={title}
+        onClick={onClickHandler}
+      >
         {title}
       </Link>
     </div>

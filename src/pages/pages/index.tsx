@@ -5,7 +5,7 @@ import { PageType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function Pages() {
   const { data: pages, isFetching: isLoadingPages } = useQuery({
@@ -25,6 +25,10 @@ export default function Pages() {
     initialData: [],
     retry: false,
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const showLoading = () => setIsLoading(true);
 
   useEffect(() => {
     if (pages.length !== 0) {
@@ -47,6 +51,11 @@ export default function Pages() {
       <Head>
         <title>Pages</title>
       </Head>
+      {isLoading && (
+        <div className="fixed w-full h-full grid place-items-center bg-white/60 z-[1000]">
+          <span className="w-16 h-16 loading loading-dots"></span>
+        </div>
+      )}
       <div className="navbar flex justify-between px-4">
         <span className="font-bold normal-case text-xl px-2">Pages</span>
         <Link href="/pages/new">
@@ -65,7 +74,7 @@ export default function Pages() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-x-4 gap-y-12 p-4">
           {pageGridData &&
             pageGridData.map((page, index) => (
-              <PageGridItem key={`${index}_${Date.now()}`} page={page} />
+              <PageGridItem key={`${index}_${Date.now()}`} page={page} onClick={showLoading} />
             ))}
         </div>
       )}
