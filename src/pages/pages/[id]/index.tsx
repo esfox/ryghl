@@ -225,16 +225,17 @@ export default function PageContent({ pageId, content: pageContent }: PageConten
         <title>{contentFirstLine.current}</title>
       </Head>
       <div
-        id="markdown-page-content"
         ref={pageContentWrapper}
-        contentEditable
-        suppressContentEditableWarning
+        id="markdown-page-content"
+        className="pb-[100vh]"
         spellCheck={false}
         onClick={closeMenus}
         style={{ '--markdown-renderer-font-size': fontSize } as CSSProperties}
         data-gramm="false"
         data-gramm_editor="false"
         data-enable-grammarly="false"
+        contentEditable
+        suppressContentEditableWarning
       >
         <MarkdownRenderer fullWidth={isFullWidth}>{pageContent}</MarkdownRenderer>
       </div>
