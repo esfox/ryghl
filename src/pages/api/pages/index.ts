@@ -1,3 +1,4 @@
+import { defaultCountPerPage } from '@/constants/pages';
 import { pagesService } from '@/services/pages.service';
 import { mapPageRecords } from '@/utils/mapper.util';
 
@@ -5,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const defaults = {
   page: 1,
-  countPerPage: 10,
+  countPerPage: defaultCountPerPage,
 };
 
 export const config = {

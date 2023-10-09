@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 import { PageRecordColumn } from '@/constants/database';
 import { SUPABASE_BUCKET_NAME } from '@/constants/env';
+import { defaultCountPerPage } from '@/constants/pages';
 import { supabase } from '@/supabase';
 import { PageRecordType } from '@/types/database';
 import { nanoid } from '@/utils/nanoid.util';
@@ -42,7 +43,8 @@ export const pagesService = {
 
     let query = pagesTable()
       .select<'*', PageRecordType>()
-      .limit(countPerPage ?? 100);
+      .limit(countPerPage ?? defaultCountPerPage)
+      .order(PageRecordColumn.createdOn, { ascending: false });
 
     if (search) {
       query = query.ilike(PageRecordColumn.title, search);
