@@ -1,4 +1,4 @@
-import { SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY } from '@/constants';
+import { SUPABASE_PROJECT_URL, SUPABASE_SERVICE_API_KEY } from '@/constants/env';
 
 import { createClient } from '@supabase/supabase-js';
 

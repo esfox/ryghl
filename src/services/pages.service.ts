@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 /* eslint-disable no-console */
-import { SUPABASE_BUCKET_NAME } from '@/constants';
 import { PageRecordColumn } from '@/constants/database';
+import { SUPABASE_BUCKET_NAME } from '@/constants/env';
 import { supabase } from '@/supabase';
 import { PageRecordType } from '@/types/database';
 import { nanoid } from '@/utils/nanoid.util';

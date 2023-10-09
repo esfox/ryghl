@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { SUPABASE_BUCKET_NAME } from '@/constants';
+import { SUPABASE_BUCKET_NAME } from '@/constants/env';
 import { supabase } from '@/supabase';
 import { EventType, SaveEventType } from '@/types';
 import { nanoid } from '@/utils/nanoid.util';

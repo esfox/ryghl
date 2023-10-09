@@ -1,4 +1,4 @@
-import { JWT_SECRET } from '@/constants';
+import { JWT_SECRET } from '@/constants/env';
 
 import { jwtVerify } from 'jose';
 
